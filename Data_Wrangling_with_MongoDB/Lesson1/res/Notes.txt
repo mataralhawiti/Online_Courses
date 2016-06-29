@@ -1,0 +1,62 @@
+Data Extraction Fundamentals
+----------------------------
+----------------------------
+
+# Data wrangling :
+	process of gathering, extracting, cleaning, and storing data.
+	Data > Gathering > Extracting > Cleaning > Stroing > Analysis
+
+	getting your data ready for anaylsis
+
+
+# Data Formats :
+	JSON, XML, XSL, CSV, HTML
+
+# How to store data in MongoDB
+
+# Data Quality :
+	Generally we shouldn't trust any data we get.
+	Human involving is always means there are problems in data.
+
+	## We need to assess out data to :
+		1. Test assumptions about :
+			- Values
+			- Data Type
+			- Shape
+
+		2. Identify errors or ourliers
+		3. Find missing values.
+
+# Tabular Formats
+	- what items [row] (dataset) contains, and what fields [column] thes items have. cells [value]
+	- Row --> [item] in dataset
+	- column --> [fields] for data items
+	- values -- > individual values for a field are stored in [cells]
+
+# CSV Format
+	- it's a common way to distribute tabular data
+	- it's being widely used because it's lightweight
+	- each line of text is a single row
+	- fields are separated by a [delimeter]
+
+# Parsing CSV files in Python
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Data Extraction Fundamentals
+----------------------------
