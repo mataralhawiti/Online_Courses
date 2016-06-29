@@ -1,0 +1,540 @@
+The mongorestore program writes data from a binary database dump created by mongodump to a MongoDB instance. 
+mongorestore can create a new database or add data to an existing database.
+mongorestore can write data to either mongod or mongos instances, in addition to 
+writing directly to MongoDB data files without an active mongod.
+
+
+
+mongorestore --collection messages --db enron messages.bson 
+
+
+
+--------------------Q1 :
+Final: Question 1
+
+Please download the Enron email dataset enron.zip, unzip it and then restore it using mongorestore. It should restore to a collection called "messages" in a database called "enron". Note that this is an abbreviated version of the full corpus. There should be 120,477 documents after restore. 
+
+Inspect a few of the documents to get a basic understanding of the structure. Enron was an American corporation that engaged in a widespread accounting fraud and subsequently failed. 
+
+In this dataset, each document is an email message. Like all Email messages, there is one sender but there can be multiple recipients. 
+
+Construct a query to calculate the number of messages sent by Andrew Fastow, CFO, to Jeff Skilling, the president. Andrew Fastow's email addess was andrew.fastow@enron.com. Jeff Skilling's email was jeff.skilling@enron.com. 
+
+For reference, the number of email messages from Andrew Fastow to John Lavorato (john.lavorato@enron.com) was 1. 
+
+1
+3 ****
+5
+7
+9
+12
+
+
+
+# easy answer :
+db.messages.find({'headers.From':'andrew.fastow@enron.com', 'headers.To':'jeff.skilling@enron.com'}).count()
+
+# make it general :
+db.messages.find({'headers.From':{$in:['andrew.fastow@enron.com']}, 'headers.To':'jeff.skilling@enron.com'}).count()
+
+
+# another (remeber match doesn't take $):
+db.messages.aggregate([ {"$unwind":"$headers.To"},{"$match":{"headers.To":"jeff.skilling@enron.com"}},
+						{"$group": {_id:"$headers.From", sum:{"$sum":1} }}, 
+						{"$match": {"_id":"andrew.fastow@enron.com"}}])
+
+
+
+--------------------Q2 :
+Final: Question 2
+
+Please use the Enron dataset you imported for the previous problem. For this question you will use the aggregation framework to figure out pairs of people that tend to communicate a lot. To do this, you will need to unwind the To list for each message. 
+
+This problem is a little tricky because a recipient may appear more than once in the To list for a message. You will need to fix that in a stage of the aggregation before doing your grouping and counting of (sender, recipient) pairs. 
+
+Which pair of people have the greatest number of messages in the dataset?
+
+susan.mara@enron.com to jeff.dasovich@enron.com
+susan.mara@enron.com to richard.shapiro@enron.com
+soblander@carrfut.com to soblander@carrfut.com
+susan.mara@enron.com to james.steffes@enron.com
+evelyn.metoyer@enron.com to kate.symes@enron.com
+susan.mara@enron.com to alan.comnes@enron.com
+
+
+--************ you have to use names with combined group _id
+
+** wrong answer !!
+db.messages.aggregate([{"$unwind":"$headers.To"},
+		       {"$group": {_id:"$headers.From", reciver:{"$addToSet":"$headers.To"}}},
+		       {"$unwind":"$reciver"},
+		       {"$group" : {_id: {"from":"$_id", "to":"$reciver"}, sum:{"$sum":1} }},
+		       {"$sort":{sum:-1}}])
+
+
+** corret , u have to use project : >>> incorrect
+db.messages.aggregate([
+  {$project: {"_id": 0,"headers.From": 1,"headers.To": 1}},  
+  {$unwind:  "$headers.To"},
+  {$group: {"_id": {from: "$headers.From", to: "$headers.To"},sum: {"$sum": 1}}},
+  {$sort: {"sum": -1}}
+])
+
+
+*** the most accurate answer
+db.messages.aggregate([ {"$unwind":"$headers.To"},
+						{"$group": {"_id":{"_id":"$_id", From:"$headers.From"}, To:{$addToSet:"$headers.To"}} },
+						{"$unwind":"$To"},
+						{"$group": {_id:{"From": "$_id.From", "To":"$To"}, count:{"$sum":1}}},
+						{"$sort":{"count":-1}},
+						{"$limit":10}])
+
+
+
+
+
+
+
+-------------------- Q3 :
+Final: Question 3
+
+This is a Hands On problem. In this problem, the database will begin in an initial state, you will manipulate it, and we will verify that the database is in the correct final state when you click 'submit'. If you need to start over at any point, you can click 'reset' to re-initialize the database, but this will not change your answer if you have already clicked 'submit'. If you wish to change your answer, get the database into the correct state, and then click 'submit'. If you leave the question and come back, the database will re-initialize. If you have clicked the 'submit' button at least once, you will see the word "Submitted" below the shell.
+
+In this problem you will update a document in the messages collection to illustrate your mastery of updating documents from the shell. In fact, we've created a collection with a very similar schema to the Enron dataset, but filled instead with randomly generated data.
+
+Please add the email address "mrpotatohead@10gen.com" to the list of addresses in the "headers.To" array for the document with "headers.Message-ID" of "<8147308.1075851042335.JavaMail.evans@thyme>"
+
+Do not add two copies of the email address; please run a .find() query immediately before submitting to confirm the state of the database.
+
+This is a fully functional web shell, so please press enter for your query to get passed to the server, just like you would for the command line shell.
+
+
+
+
+Answer :
+
+db.messages.update({"headers.Message-ID":"<8147308.1075851042335.JavaMail.evans@thyme>"}, {$push : {"headers.To" : "mrpotatohead@10gen.com"}})
+
+
+
+db.messages.find({"headers.Message-ID":"<8147308.1075851042335.JavaMail.evans@thyme>"})
+
+
+
+
+
+"<32788362.1075840323896.JavaMail.evans@thyme>"
+
+
+
+-------------------- Q5 :
+Final: Question 5
+http://programming-spider.blogspot.com/2015/05/mongodb-m101n-final-exam-question-5.html
+"MongoDB query optimizer processes queries and chooses the most efficient "query plan" for a query given the available indexes.
+Which means MongoDB can use multiple indexes but the execution plan will be only one."
+
+
+
+Suppose your have a collection stuff which has the _id index,
+
+  {
+    "v" : 1,
+    "key" : {
+      "_id" : 1
+    },
+    "ns" : "test.stuff",
+    "name" : "_id_"
+  }
+and one or more of the following indexes as well:
+
+  {
+    "v" : 1,
+    "key" : {
+      "a" : 1,
+      "b" : 1
+    },
+    "ns" : "test.stuff",
+    "name" : "a_1_b_1"
+  }
+  {
+    "v" : 1,
+    "key" : {
+      "a" : 1,
+      "c" : 1
+    },
+    "ns" : "test.stuff",
+    "name" : "a_1_c_1"
+  }
+  {
+    "v" : 1,
+    "key" : {
+      "c" : 1
+    },
+    "ns" : "test.stuff",
+    "name" : "c_1"
+  }
+  {
+    "v" : 1,
+    "key" : {
+      "a" : 1,
+      "b" : 1,
+      "c" : -1
+    },
+    "ns" : "test.stuff",
+    "name" : "a_1_b_1_c_-1"
+  }
+Now suppose you want to run the following query against the collection.
+
+db.stuff.find({'a':{'$lt':10000}, 'b':{'$gt': 5000}}, {'a':1, 'c':1}).sort({'c':-1})
+
+Which of the indexes could be used by MongoDB to assist in answering the query? Check all that apply.
+
+
+a_1_c_1   can be used for find operation* 'a':{'$lt':10000}
+a_1_b_1_c_-1 can be used for find operation* 'a':{'$lt':10000}, 'b':{'$gt': 5000}, sort({'c':-1})
+a_1_b_1 can be used for find operation* 'a':{'$lt':10000}, 'b':{'$gt': 5000}
+_id_
+c_1   could be used for sorting* sort({'c':-1})
+
+
+
+
+-----------------------
+
+Final: Question 6
+
+Suppose you have a collection of students of the following form:
+{
+	"_id" : ObjectId("50c598f582094fb5f92efb96"),
+	"first_name" : "John",
+	"last_name" : "Doe",
+	"date_of_admission" : ISODate("2010-02-21T05:00:00Z"),
+	"residence_hall" : "Fairweather",
+	"has_car" : true,
+	"student_id" : "2348023902",
+	"current_classes" : [
+		"His343",
+		"Math234",
+		"Phy123",
+		"Art232"
+	]
+}
+
+Now suppose that basic inserts into the collection, which only include the last name, first name and student_id, are too slow (we can't do enough of them per second from our program). What could potentially improve the speed of inserts. Check all that apply.
+
+1. Add an index on last_name, first_name if one does not already exist.
+Incorrect : adding an index impose overhead on insert operation, although it will surely improve read opertation
+
+2. Remove all indexes from the collection, leaving only the index on _id in place
+correct
+
+3. Provide a hint to MongoDB that it should not use an index for the inserts
+Incorrect : there is no way to tell mongo db to temporarily disable indexes (hint is used to assert mongo database engine to forcefully use the given index and not to disable it) 
+
+4. Set w=0, j=0 on writes
+Correct : there will not be any overhead of waiting for the write acknowledgement.
+
+5.Build a replica set and insert data into the secondary nodes to free up the primary nodes.
+Incorrect : it is not possible to write on secondary nodes 
+
+
+
+
+
+
+
+
+
+
+
+db.stuff.find({'a':{'$lt':10000}, 'b':{'$gt': 5000}}, {'a':1, 'c':1}).sort({'c':-1})
+
+db.stuff.insert({'a':12000, 'b':9000, 'c':3})
+db.stuff.insert({'a':8000, 'b':13000, 'c':9})
+db.stuff.insert({'a':10000, 'b':2000, 'c':77})
+
+
+db.stuff.createIndex({a:1, b:1}, {name: "a_1_b_1"})
+db.stuff.createIndex({a:1, c:1}, {name: "a_1_c_1"})
+db.stuff.createIndex({c:1}, {name: "c_1"})
+db.stuff.createIndex({a:1, b:1, c:-1}, {name: "a_1_b_1_c_-1"})
+
+***db.stuff.createIndex({b:-1, a:1, c:1}, {name: "b_-1_a_1_c_1"})
+
+
+
+
+
+db.stuff.find({'a':{'$lt':10000}, 'b':{'$gt': 5000}}, {'a':1, 'c':1}).sort({'c':-1}).explain()
+
+db.stuff.find({'a':{'$lt':10000}, 'b':{'$gt': 5000}}, {'a':1, 'c':1}).sort({'c':-1}).hint('a_1_b_1').explain()
+
+
+
+-----------------------
+Final: Question 7
+
+You have been tasked to cleanup a photo-sharing database. The database consists of two collections, albums, and images. Every image is supposed to be in an album, but there are orphan images that appear in no album. Here are some example documents (not from the collections you will be downloading). 
+
+> db.albums.findOne()
+{
+	"_id" : 67
+	"images" : [
+		4745,
+		7651,
+		15247,
+		17517,
+		17853,
+		20529,
+		22640,
+		27299,
+		27997,
+		32930,
+		35591,
+		48969,
+		52901,
+		57320,
+		96342,
+		99705
+	]
+}
+
+> db.images.findOne()
+{ "_id" : 99705, "height" : 480, "width" : 640, "tags" : [ "dogs", "kittens", "work" ] }
+
+From the above, you can conclude that the image with _id = 99705 is in album 67. It is not an orphan. 
+
+Your task is to write a program to remove every image from the images collection that appears in no album. Or put another way, if an image does not appear in at least one album, it's an orphan and should be removed from the images collection. 
+
+Download final7.zip from Download Handout link and use mongoimport to import the collections in albums.json and images.json. 
+
+When you are done removing the orphan images from the collection, there should be 89,737 documents in the images collection. To prove you did it correctly, what are the total number of images with the tag 'kittens" after the removal of orphans? As as a sanity check, there are 49,932 images that are tagged 'kittens' before you remove the images. 
+Hint: you might consider creating an index or two or your program will take a long time to run.
+
+49,932
+47,678
+38,934
+45,911
+44,822
+
+
+
+kittens
+
+$elemMatch
+
+db.images.find({tags : "kittens"})
+
+
+
+db.albums.aggregate([ {$project: {"_id": 0}}, {"$unwind" : "$images"} ]) >> wrong !! we need an output from $project 
+** db.albums.aggregate([ {$project: {"_id": 0, "images":1}}, {"$unwind" : "$images"} ])
+
+
+
+
+-------------
+Final: Question 10
+
+Understanding the output of explain
+
+We perform the following query on the enron dataset:
+
+var exp = db.messages.explain('executionStats')
+ 
+exp.find( { 'headers.Date' : { '$gt' : new Date(2001,3,1) } }, { 'headers.From' : 1, '_id' : 0 } ).sort( { 'headers.From' : 1 } )
+and get the following explain output.
+{
+  "queryPlanner" : {
+    "plannerVersion" : 1,
+    "namespace" : "enron.messages",
+    "indexFilterSet" : false,
+    "parsedQuery" : {
+      "headers.Date" : {
+        "$gt" : ISODate("2001-04-01T05:00:00Z")
+      }
+    },
+    "winningPlan" : {
+      "stage" : "PROJECTION",
+      "transformBy" : {
+        "headers.From" : 1,
+        "_id" : 0
+      },
+      "inputStage" : {
+        "stage" : "FETCH",
+        "filter" : {
+          "headers.Date" : {
+            "$gt" : ISODate("2001-04-01T05:00:00Z")
+          }
+        },
+        "inputStage" : {
+          "stage" : "IXSCAN",
+          "keyPattern" : {
+            "headers.From" : 1
+          },
+          "indexName" : "headers.From_1",
+          "isMultiKey" : false,
+          "direction" : "forward",
+          "indexBounds" : {
+            "headers.From" : [
+              "[MinKey, MaxKey]"
+            ]
+          }
+        }
+      }
+    },
+    "rejectedPlans" : [ ]
+  },
+  "executionStats" : {
+    "executionSuccess" : true,
+    "nReturned" : 83057,
+    "executionTimeMillis" : 726,
+    "totalKeysExamined" : 120477,
+    "totalDocsExamined" : 120477,
+    "executionStages" : {
+      "stage" : "PROJECTION",
+      "nReturned" : 83057,
+      "executionTimeMillisEstimate" : 690,
+      "works" : 120478,
+      "advanced" : 83057,
+      "needTime" : 37420,
+      "needFetch" : 0,
+      "saveState" : 941,
+      "restoreState" : 941,
+      "isEOF" : 1,
+      "invalidates" : 0,
+      "transformBy" : {
+        "headers.From" : 1,
+        "_id" : 0
+      },
+      "inputStage" : {
+        "stage" : "FETCH",
+        "filter" : {
+          "headers.Date" : {
+            "$gt" : ISODate("2001-04-01T05:00:00Z")
+          }
+        },
+        "nReturned" : 83057,
+        "executionTimeMillisEstimate" : 350,
+        "works" : 120478,
+        "advanced" : 83057,
+        "needTime" : 37420,
+        "needFetch" : 0,
+        "saveState" : 941,
+        "restoreState" : 941,
+        "isEOF" : 1,
+        "invalidates" : 0,
+        "docsExamined" : 120477,
+        "alreadyHasObj" : 0,
+        "inputStage" : {
+          "stage" : "IXSCAN",
+          "nReturned" : 120477,
+          "executionTimeMillisEstimate" : 60,
+          "works" : 120477,
+          "advanced" : 120477,
+          "needTime" : 0,
+          "needFetch" : 0,
+          "saveState" : 941,
+          "restoreState" : 941,
+          "isEOF" : 1,
+          "invalidates" : 0,
+          "keyPattern" : {
+            "headers.From" : 1
+          },
+          "indexName" : "headers.From_1",
+          "isMultiKey" : false,
+          "direction" : "forward",
+          "indexBounds" : {
+            "headers.From" : [
+              "[MinKey, MaxKey]"
+            ]
+          },
+          "keysExamined" : 120477,
+          "dupsTested" : 0,
+          "dupsDropped" : 0,
+          "seenInvalidated" : 0,
+          "matchTested" : 0
+        }
+      }
+    }
+  },
+  "serverInfo" : {
+    "host" : "dpercy-mac-air.local",
+    "port" : 27017,
+    "version" : "3.0.1",
+    "gitVersion" : "534b5a3f9d10f00cd27737fbcd951032248b5952"
+  },
+  "ok" : 1
+}
+Check below all the statements that are true about the way MongoDB handled this query.
+
+1.The query avoided sorting the documents because it was able to use an index's ordering. *****
+2.The query used an index to figure out which documents match the find criteria. ****
+3.The query returned 120,477 documents.
+4.The query scanned every document in the collection. *****
+
+
+
+************* the answer was wrong : 2 is wrong
+
+the answer :
+Answer
+
+Let's look at each of those statements:
+>>>> 3. "The query used an index to figure out which documents match the find criteria." - This is false. 
+
+		The query does use an index, but the filter on "headers.Date" shows up in the "FETCH" stage, not the "IXSCAN" stage. 
+		The "IXSCAN" stage's "indexBounds" shows that the full index is scanned: from MinKey to MaxKey. 
+		This makes sense because the filter needs to look at the "headers.Date" field, which isn't in this index.
+
+
+>>>> 1. "The query avoided sorting the documents because it was able to use an index's ordering." - This is true. 
+
+		There's no "SORT" stage in the plan, which means the documents are already in the correct order as they're being scanned. 
+		This makes sense because the "IXSCAN" stage is using the "headers.From_1" index, and the sort was on { "headers.From": 1 }.
+
+
+>>>> 3. "The query returned 120,477 documents." - This is false. 
+		Under "executionStats", "nReturned" is 83057.
+
+
+>>>> 4. "The query examined every document in the collection." - This is true. 
+
+		The "IXSCAN" stage doesn't have any bounds or filter, so it scans the whole index, which means the "FETCH" stage ends up fetching every document. 
+		And under "executionStats", "totalDocsExamined" is 120477, which you might remember is the number of documents in the collection.
+
+
+-----------------------
+Final: Question 8
+
+Suppose you have a three node replica set. Node 1 is the primary. Node 2 is a secondary, and node 3 is a secondary running with a delay of two hours. All writes to the database are issued with w=majority and j=1 (by which we mean that the getLastError call has those values set).
+
+A write operation (which could be insert or update) is initiated from your application using the pymongo driver at time t=0. At time t=5 seconds, the primary (Node 1), goes down for an hour and Node 2 is elected primary. Note that your write operation has not yet returned at the time of the failure. Note also that although you have not received a response from the write, it has been processed and written by Node 1 before the failure. Node 3, since it has a slave delay option set, is lagging.
+
+Will there be a rollback of data on Node 1 when it comes back up? Choose the best answer.
+
+
+Yes, always
+No, never
+Maybe, it depends on whether Node 3 has processed the write. ***** XXXXXX
+Maybe, it depends on whether Node 2 has processed the write. CCCCC
+
+
+
+-----------------------
+Final: Question 9
+
+Imagine an electronic medical record database designed to hold the medical records of every individual in the United States. Because each person has more than 16MB of medical history and records, it's not feasible to have a single document for every patient. Instead, there is a patient collection that contains basic information on each person and maps the person to a patient_id, and a record collection that contains one document for each test or procedure. One patient may have dozens or even hundreds of documents in the record collection.
+
+We need to decide on a shard key to shard the record collection. What's the best shard key for the record collection, provided that we are willing to run inefficient scatter-gather operations to do infrequent research and run studies on various diseases and cohorts? That is, think mostly about the operational aspects of such a system. And by operational, we mean, think about what the most common operations that this systems needs to perform day in and day out.
+
+
+patient_id
+_id
+Primary care physician (your principal doctor that handles everyday problems)
+Date and time when medical record was created
+Patient first name
+Patient last name
+
+
+

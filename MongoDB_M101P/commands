@@ -1,0 +1,40 @@
+----------------
+
+apt-get --purge remove dput
+
+cat /etc/apt/sources.list
+
+sudo dpkg --configure -a
+
+sudo apt-get -f install
+
+sudo apt-get autoremove 
+
+
+
+
+
+
+-----------------------
+
+sudo apt-get purge apport
+sudo apt-get autoremove
+sudo apt-get clean
+sudo apt-get install apport
+
+
+sudo apt-cache search python
+sudo apt-get purge --auto-remove python (will remove python package and all dependecies)
+
+/var/lib/dpkg/
+
+
+
+
+-- 
+ctrl+alt+f1 >>> ctrl+alt+f7
+sudo apt-get install ubuntu-desktop
+
+--- duplicate 
+http://askubuntu.com/questions/120621/how-to-fix-duplicate-sources-list-entry
+

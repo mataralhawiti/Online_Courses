@@ -1,0 +1,406 @@
+# Week 5 :
+
+db.products.aggregate([ {$group : 	{_id:$manufacturer", num_products 	: 	{$sum:1}} } ])
+db.products.aggregate([ {$group : 	{_id:{"manufacture":"$manufacturer"}, num_products 	: 	{$sum:1}} } ]) ## more readable
+db.products.aggregate([ { $group : {_id:"$category", num_products : {$sum:1}} } ])
+
+
+-- compound grouping --------------------------------------------------------------------------------------------------------------- :
+db.products.aggregate([ {$group : 	{_id:{"maker" : "$manufacturer", "category":"$category" } , num_products 	: 	{$sum:1}} } ])
+
+
+-- $sum --------------------------------------------------------------------------------------------------------------- :
+db.products.aggregate( [ {$group : { _id:{"maker":"$manufacturer"}, sum_prices :{$sum:"$price"}  } } ] )
+
+
+###db.zips.aggregate( [ {$group : {_id : {"state":"$state"}     , population : {$sum:"$pop"} } } ] )
+db.cities.aggregate( [ {$group : {_id : {"state":"$state"}     , population : {$sum:"$pop"} } } ] )
+
+
+-- $using avg  --------------------------------------------------------------------------------------------------------------- :
+db.products.aggregate ( [ {$group : {_id : {"category":"$category"} , avg_prices : {$avg:"$price"} } } ] )
+db.cities.aggregate( [ {$group : {_id : {"state":"$state"}     , avg_population : {$avg:"$pop"} } } ] )
+
+
+-- using $addToSet  --------------------------------------------------------------------------------------------------------------- :
+db.products.aggregate ( [ { $group : { _id : {"maker" : "$manufacturer"} ,  category : {$addToSet : "$category"}} } ] )
+
+db.cities.aggregate ( [ { $group : { _id : { "city": "$city"}, zip : {$addToSet : "$_id"} } } ] ) # zip in each city !!
+db.cities.aggregate ( [ { $group : { _id : "$city", zip : {$addToSet : "$_id"} } } ] ) # zip in each city !!
+
+
+-- using $push ( smiliar to $addToSet, but it allows duplicate ) --------------------------------------------------------------------------------------------------------------- :
+db.products.aggregate ( [ { $group : { _id : {"maker" : "$manufacturer"} ,  category : {$push : "$category"}} } ] )
+
+
+-- using $max , $min --------------------------------------------------------------------------------------------------------------- :
+db.products.aggregate( [ {$group : { _id:{"maker":"$manufacturer"}, maxprice :{$max:"$price"}  } } ] )
+db.cities.aggregate( 	[ {$group : {_id :"$state" , 	max_population : {$max:"$pop"} }} ] )
+
+-- double $group stage --------------------------------------------------------------------------------------------------------------- :
+db.grades.aggregate([ {'$group':{_id:{class_id:"$class_id", student_id:"$student_id"}, 'average':{"$avg":"$score"}}},
+    				  {'$group':{_id:"$_id.class_id", 'average':{"$avg":"$average"}}}])
+
+
+db.grades.aggregate([{'$group':{_id:{class_id:"$class_id", student_id:"$student_id"}, 'average':{"$avg":"$score"}}}]) ### --- first $group stage
+
+
+Quiz :
+db.fun.find()
+{ "_id" : 0, "a" : 0, "b" : 0, "c" : 21 }
+{ "_id" : 1, "a" : 0, "b" : 0, "c" : 54 }
+{ "_id" : 2, "a" : 0, "b" : 1, "c" : 52 }
+{ "_id" : 3, "a" : 0, "b" : 1, "c" : 17 }
+{ "_id" : 4, "a" : 1, "b" : 0, "c" : 22 }
+{ "_id" : 5, "a" : 1, "b" : 0, "c" : 5 }
+{ "_id" : 6, "a" : 1, "b" : 1, "c" : 87 }
+{ "_id" : 7, "a" : 1, "b" : 1, "c" : 97 }
+
+
+
+db.fun.aggregate([{$group:{_id:{a:"$a", b:"$b"}, c:{$max:"$c"}}}, {$group:{_id:"$_id.a", c:{$min:"$c"}}}]) >>>>>>> 52 and 22
+
+
+
+-- $project  --------------------------------------------------------------------------------------------------------------- :
+
+db.products.aggregate ( [ { 
+							$project : { _id:0, "maker":{$toLower : "$manufacturer"}, 
+										"details": {"category":"$category", "price":{"$multiply":["$price",10]}}, 
+										"item":"$name" } 
+					  }  ] )
+
+## wrong ! >> db.cities.aggregate ( [ { $project : {_d:0, "city":{$toLower:"$city"}, "pop":"$pop", "state":{"$toUpper":"$state"}, "zip":"$_id" } } ] )
+
+db.cities.aggregate ( [ { $project : {_id:0, "city":{$toLower:"$city"}, "pop":1, "state":1, "zip":"$_id" } } ] )
+
+
+
+-- $match  --------------------------------------------------------------------------------------------------------------- :
+
+db.cities.aggregate([{$match:{state:"CA"}}])
+
+db.cities.aggregate([{$match:{state:"CA"}},       
+					 {$group:{_id: "$city",population: {$sum:"$pop"},zip_codes: {$addToSet: "$_id"}}
+					}])
+
+## make it pretty, by renaming _id
+db.cities.aggregate([
+					 {$match:{state:"CA"}},       
+					 {$group:{_id: "$city",population: {$sum:"$pop"},zip_codes: {$addToSet: "$_id"}}},
+					     {$project:{_id: 0,city: "$_id",population: 1,zip_codes:1}}
+					])
+
+db.zips.aggregate([{$match:{pop:{$gt:100000}}}])
+
+
+-- $text  --------------------------------------------------------------------------------------------------------------- :
+db.sentences.aggregate( [ { $match : {$text : {$search: "tree rat"}} },
+						  { $project : {words : 1, _id:0} }
+						 ] )
+
+
+** note :- words key doesn't appear in $match because in full search text (fst) you have maximum of one fst in each collection !
+
+** refine the query by sorting by textScore (strongest match appears first):
+db.sentences.aggregate( [ { $match : {$text : {$search: "tree rat"}} },
+						  { $sort : {$score : {$meta : "textScore"}} },
+						  { $project : {words : 1, _id:0} }
+						 ] )
+
+
+
+### you can prepare .js script then pass it via shell :
+mongo < text.js
+
+text.js :
+use dbName;
+query;
+
+
+# Quiz: Using $text
+
+Which of the following statements are true about using a $text operator in the aggregation pipeline
+
+
+$text is only allowed in the $match stage of the aggregation pipeline  ** (correct)
+$text is only allowed within a $match that is the first stage of the aggregation pipeline  ** (correct)
+
+$text can be used without an underlying full text search index when used in conjunction with aggregation
+the results of $text are always sorted according by search match quality
+
+-- $sort  --------------------------------------------------------------------------------------------------------------- :
+db.cities.aggregate([
+    {$match:{state:"NY"}},
+    {$group:{_id: "$city",population: {$sum:"$pop"}}},
+    {$project:{_id: 0,city: "$_id",population: 1}},
+    {$sort:{population:-1}}
+    ])
+
+
+# aggregation with one stage (sort) :
+db.zips.aggregate( [ { $sort: { state:1, city:1 } } ] )
+
+
+-- $skip, $limit  --------------------------------------------------------------------------------------------------------------- :
+db.cities.aggregate([
+    {$match:{state:"NY"}},
+    {$group:{_id: "$city",population: {$sum:"$pop"}}},
+    {$project:{_id: 0,city: "$_id",population: 1}},
+    {$sort:{population:-1}},
+    {$skip : 10},
+    {$limit : 5}
+    ])
+
+
+Quiz : Suppose you change the order of skip and limit in the query shown in the lesson, to look like this: ??
+0
+
+
+
+-- $first, $last  --------------------------------------------------------------------------------------------------------------- :
+
+db.cities.aggregate([
+    /* get the population of every city in every state */
+    {$group:
+     {
+	 _id: {state:"$state", city:"$city"},
+	 population: {$sum:"$pop"},
+     }
+    },
+
+     /* sort by state, population */
+    {$sort: 
+     {"_id.state":1, "population":-1}
+    },
+
+    /* group by state, get the first item in each group */
+    {$group: 
+     {
+	 _id:"$_id.state",
+	 city: {$first: "$_id.city"},
+	 population: {$first:"$population"}
+     }
+    },
+
+    /* sort by state */
+    {$sort :
+     {
+     "_id":1
+     }
+
+    }
+])
+
+
+** refine the example to $project and rename _id !!
+
+
+
+
+-- $unwind  --------------------------------------------------------------------------------------------------------------- :
+use blog;
+db.posts.aggregate([
+    /* unwind by tags */
+    {"$unwind":"$tags"},
+
+    /* now group by tags, counting each tag */
+    {"$group": 
+     {"_id":"$tags",
+      "count":{$sum:1}
+     }
+    },
+
+    /* sort by popularity */
+    {"$sort":{"count":-1}},
+
+    /* show me the top 10 */
+    {"$limit": 10},
+
+    /* change the name of _id to be tag */
+    {"$project":
+     {_id:0,
+      'tag':'$_id',
+      'count' : 1
+     }
+    }
+
+    ])
+
+
+
+
+# quiz : Which grouping operator will enable to you to reverse the effects of an unwind?
+$push
+
+
+
+-- double $unwind  --------------------------------------------------------------------------------------------------------------- :
+.js file :
+use agg;
+db.inventory.drop();
+db.inventory.insert({'name':"Polo Shirt", 'sizes':["Small", "Medium", "Large"], 'colors':['navy', 'white', 'orange', 'red']})
+db.inventory.insert({'name':"T-Shirt", 'sizes':["Small", "Medium", "Large", "X-Large"], 'colors':['navy', "black",  'orange', 'red']})
+db.inventory.insert({'name':"Chino Pants", 'sizes':["32x32", "31x30", "36x32"], 'colors':['navy', 'white', 'orange', 'violet']})
+
+
+ex :
+db.inventory.aggregate([
+    {$unwind: "$sizes"},
+    {$unwind: "$colors"},
+    {$group: 
+     {
+	'_id': {'size':'$sizes', 'color':'$colors'},
+	'count' : {'$sum':1}
+     }
+    }
+])
+
+
+# reverse with $push
+db.inventory.aggregate([
+    {$unwind: "$sizes"},
+    {$unwind: "$colors"},
+    /* create the color array */
+    {$group: 
+     {
+	'_id': {name:"$name",size:"$sizes"},
+	 'colors': {$push: "$colors"},
+     }
+    },
+    /* create the size array */
+    {$group: 
+     {
+	'_id': {'name':"$_id.name",
+		'colors' : "$colors"},
+	 'sizes': {$push: "$_id.size"}
+     }
+    },
+    /* reshape for beauty */
+    {$project: 
+     {
+	 _id:0,
+	 "name":"$_id.name",
+	 "sizes":1,
+	 "colors": "$_id.colors"
+     }
+    }
+])
+
+
+# reverse with $addToSort
+db.inventory.aggregate([
+    {$unwind: "$sizes"},
+    {$unwind: "$colors"},
+    {$group: 
+     {
+	'_id': "$name",
+	 'sizes': {$addToSet: "$sizes"},
+	 'colors': {$addToSet: "$colors"},
+     }
+    }
+])
+
+
+
+
+
+-- $out  --------------------------------------------------------------------------------------------------------------- :
+
+db.products.aggregate ( [ {$group : {_id : {"category":"$category"} , avg_prices : {$avg:"$price"} } }, {$out:"aggregationOut"} ] )
+
+
+-- aggregation options  --------------------------------------------------------------------------------------------------------------- :
+
+#-- explain (note : after the array !)
+db.products.aggregate ( [ {$group : {_id : {"category":"$category"} , avg_prices : {$avg:"$price"} } } ],
+						{explain:true} )
+
+#-- allowDiskUse
+db.products.aggregate ( [ {$group : {_id : {"category":"$category"} , avg_prices : {$avg:"$price"} } } ],
+						{allowDiskUse:true} )
+
+
+
+
+
+-- python & aggregation   --------------------------------------------------------------------------------------------------------------- :
+
+import pymongo
+
+print(pymongo.version)
+
+connection = pymongo.MongoClient()
+db = connection.usa
+
+res = db.cities.aggregate( [ {"$group" : {"_id" : {"state":"$state"}     , "population" : {"$sum":"$pop"} } } ] )
+
+for i in res :
+	print(i)
+
+
+# -- you have to use "" ----> "$group"  -----> NOT ----> $grouo 
+# by default, pymonog 3.0 + returns aggregation reslut in a cursor not one big doc 
+
+
+
+
+
+
+-- HW   --------------------------------------------------------------------------------------------------------------- :
+5.1 :
+mongoimport -d blog -c posts --drop posts.json
+
+db.posts.aggregate([ 	{$unwind : "$comments"}, 
+						{$project : {"comments":1, "_id":0}} ,  
+						{$group : {"_id":"$comments.author", "count" : {$sum:1}}},
+						{$sort : {"count":1}}
+					])
+
+
+5.2
+
+# wrong answer 
+db.zips.aggregate([{$match:{state:{$in : ["CA", "NY"]}, pop:{$gt:25000}}}, {$group : {_id:{city:"$city"}, population:{$sum:"$pop"}}}, {$group : {_id:{city:"$city"}, avr : {$avg:"$population"}}} ])
+
+
+# correct
+db.zips.aggregate([	
+					{$group : {"_id":{state:"$state", city:"$city"}, pop:{"$sum":"$pop"}}},
+					{$match:{pop:{$gt:25000}, "_id.state":{$in : ["CA", "NY"]}}},
+					{$group : {_id:null, avg : {$avg:"$pop"}}}
+				])
+
+
+
+5.3
+
+db.grades.aggregate([
+					 {"$unwind" : "$scores"},
+					 {"$match" : {"scores.type":{$in : ['exam', 'homework']}}},
+					 {"$group" : {"_id" : {"class":"$class_id", "student":"$student_id"}, "student_avg" : {"$avg":"$scores.score"}} },
+					 {"$group" : {"_id" : "$_id.class", "class_avg": {"$avg":"$student_avg"}} },
+					 {"$sort" : {"class_avg":-1}}
+
+					])
+
+# using $ne
+db.grades.aggregate([
+					 {"$unwind" : "$scores"},
+					 {"$match" : {"scores.type":{$ne : ['exam', 'homework']}}},
+					 {"$group" : {"_id" : {"class":"$class_id", "student":"$student_id"}, "student_avg" : {"$avg":"$scores.score"}} },
+					 {"$group" : {"_id" : "$_id.class", "class_avg": {"$avg":"$student_avg"}} },
+					 {"$sort" : {"class_avg":-1}}
+
+					])
+
+
+
+5.4
+
+db.zips.aggregate([
+					{$project: {first_char: {$substr : ["$city",0,1]}, "city":1, "pop":1}},
+					{"$match":{"first_char":{$regex:'[0-9]'}}},
+					{"$group" : {"_id":null, "sum":{"$sum":"$pop"}}}
+
+				 ])

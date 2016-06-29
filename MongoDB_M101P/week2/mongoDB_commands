@@ -1,0 +1,13 @@
+mongo
+show dbs
+use test
+db
+show collections
+db.things.save({a:1, b:2})
+db.things.save({a:1, b:5, c:55, d:47}) # schemaless/dynamic
+db.things.find()
+db.things.save({name : "Matar", hobbies:["reading", "swimming"]) #
+db.things.save({name : "Matar", add:{tit:"Mr", job:"dev"}}) # sub-document within the doc
+db.things.save({name : "Matar", add:{tit:"Mr", job:"dev"}, friends:[{f1:"Moha", f2:"msms"}, "Aziz", "Ali"]})
+
+cls

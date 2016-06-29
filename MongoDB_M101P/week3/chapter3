@@ -1,0 +1,59 @@
+#-- Multikey indexes :
+
+db.students.insert({"_id":0, "name":"Matar", "teachers":[0,1]})
+db.students.insert({"_id":1, "name":"Aziz", "teachers":[0,1,3]})
+db.students.insert({"_id":2, "name":"Ali", "teachers":[1,2,3]})
+db.students.insert({"_id":3, "name":"Band", "teachers":[0,3]})
+
+db.students.find()
+
+
+
+db.teachers.insert({"_id":0 , "name":Mark"})
+db.teachers.insert({"_id":1 , "name":"Joe"})
+db.teachers.insert({"_id":2 , "name":"Dexter"})
+db.teachers.insert({"_id":3 , "name":"Nick"})
+
+db.teachers.find()
+
+
+
+Add multi-key index on "teachers" in student collection >>> used in Q 2 :
+db.students.ensureIndex({"teacher":1})
+
+#----------------------------------
+
+Q1 : find all teachers for a give student :
+
+
+
+
+Q2 : find all students for give teach : (append explain)
+db.students.find({"teachers":{$all:[0,1]}}).explain()
+
+
+# ------------
+
+
+QUIZ: TREES
+
+Given the following typical document for a e-commerce category hierarchy collection called categories
+{
+  _id: 34,
+  name : "Snorkeling",
+  parent_id: 12,
+  ancestors: [12, 35, 90]
+}
+
+
+Which query will find all descendants of the snorkeling category?
+
+db.categories.find({ancestors:{'$in':[12,35,90]}})
+db.categories.find({parent_id: 34})
+db.categories.find({_id:{'$in':[12,35,90]}})
+@@db.categories.find({ancestors:34})
+
+
+
+
+

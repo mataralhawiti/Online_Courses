@@ -1,0 +1,12 @@
+2 : susan.mara@enron.com to jeff.dasovich@enron.com
+
+4 : 3f837hhg673ghd93hgf8
+
+8 : Maybe, it depends on whether Node 2 has processed the write
+
+
+10 :
+The query avoided sorting the documents because it was able to use an index's ordering. *****************
+The query used an index to figure out which documents match the find criteria.
+The query returned 120,477 documents.
+The query scanned every document in the collection. *****************

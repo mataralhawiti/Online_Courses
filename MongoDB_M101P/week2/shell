@@ -1,0 +1,163 @@
+for(i=0; i<1000; i++){
+names = ["exam","essay","quiz"];
+for(j=0; j<3; j++){
+db.scores.insert({"student":i, "type":names[j], "score": Math.round(Math.random()*100)}); } }
+
+----------
+db.scores.find({"score":96, "type":"exam"}, {"student":true,"_id":false}).pretty()
+
+Mongo shell
+
+------------
+
+db.scores.find({"score":96}).count()
+
+
+
+-----------------------
+
+db.scores.count()
+
+
+-----------
+
+db.scores.drop() // drop collection
+
+-----------
+
+db.scores.remove{} // empty collection
+
+
+-------
+
+db.scores.find({score:{$gt:95}})
+db.scores.find({score:{$gt:95, $lte:98}, type:"exam") // none
+db.scores.find({score:{$gt:95, $lte:98}, type:"essay"})
+db.scores.find({score:{$gt:95, $lt:98}, type:"essay"}).pretty() 
+db.scores.find({score:{$gte:95, $lte:98}, type:"essay"}).pretty() // notice : e !!
+
+-------
+
+db.emp.find({city : {$exists : true}})
+db.emp.find({city : {$exists : true}}).pretty()
+
+db.emp.find({city : {$exists : false}})
+
+
+db.emp.find({city : {$type : 2}})  // 2 means 'string'
+
+-- regex
+db.emp.find({name : {$regex : "a"}})
+
+db.emp.find({name : {$regex : "e$"}})
+
+
+-------- $or
+-- takes an array 
+db.emp.find({$or : [{name:"Matar"},{city:"San"}] }).pretty()
+
+---- Arrays
+
+db.accounts.insert({name:"Matar", fav:["beer", "perfume"]})
+db.accounts.insert({name:"Ahmed", fav:["chees", "perfume"]})
+db.accounts.insert({name:"Hola", fav:["beer", "coca"]})
+
+
+-- $in $all
+db.accounts.find({fav:"coca"})
+db.accounts.find( {fav : { $all : ["perfume", "beer"] }}).pretty()
+
+db.emp.find({name : {$in : ["Matar", "Nan"]}}).pretty()  // $in to query string
+db.emp.find({fav : {$in : ["beer", "cola"]}}).pretty() // $in to query array
+
+ 
+/// prac -------------------
+var a = { name : "William" , friends : [ "Bob" , "Fred" ] , favorites : [ "hamburgers", "running" ] }
+var b = { name : "Stephen" , friends : [ "Joe" , "Pete" ] , favorites : [ "pickles", "swimming" ] }
+var c = { name : "Cliff" , friends : [ "Pete" , "Joe" , "Tom" , "Bob" ] , favorites : [ "pickles", "cycling" ] }
+var d = { name : "Harry" , friends : [ "Joe" , "Bob" ] , favorites : [ "hot dogs", "swimming" ] }
+
+db.person.insert(a)
+db.person.insert(b)
+db.person.insert(c)
+db.person.insert(d)
+
+db.person.find().pretty()
+
+db.person.find({friends : {$all : ["Bob","Joe"]}, favorites : {$in : ["pickles", "running"]}}).pretty()
+
+
+db.person.find({friends : {$all : ["Bob","Joe"]}, favorites : {$in : ["pickles", "running"]}}, {name:true, _id:false}).pretty()
+
+
+
+--- query by Dot notation :
+// create new doc , 2 fields:
+// filed 1 > name : name > value : ........
+// field 2 > name : email > value : nested doc
+
+db.user.insert( {name : "Matar", email : {work : "maala@bab.com", personal:"mamama@gmail.com"}} ) 
+
+db.user.find({email : {work : "maala@bab.com", personal:"mamama@gmail.com"}}).pretty() // works fine
+
+db.user.find({email : {"personal":"mamama@gmail.com" , work : "maala@bab.com"}}).pretty() // wont work .. order is important
+
+db.user.find ({"email.work" : "maala@bab.com"}).pretty()
+
+
+quiz :
+{ product : "Super Duper-o-phonic", 
+  price : 100000000000,
+  reviews : [ { user : "fred", comment : "Great!" , rating : 5 },
+              { user : "tom" , comment : "I agree with Fred, somewhat!" , rating : 4 } ],
+  ... }
+
+Q : find price > 10000 and rating>=5
+db.catalog.find ({price : {$gt:10000},"reviews.rating" : {$gte:5}})
+
+
+
+----- import json
+mongoimport --db test --collection gith --file s.json --jsonArray
+
+
+---- Querying cursor :
+
+cur = db.sample.find(); null; // modifing on query nothing has been sent to server
+cur.hasNext(); null;
+cur.next()
+cur.limit(3); null;
+cur.sort({"name":-1}).pretty()
+
+
+cur.sort({"name":-1}).limit(5)
+while(cur.hasNext()) printjson(cur.next())
+
+
+
+Quiz :
+{
+	"_id" : ObjectId("50844162cb4cf4564b4694f8"),
+	"student" : 0,
+	"type" : "exam",
+	"score" : 75
+}
+db.scores.find({typr:"exam"}).sort({score:-1}).skip(50).limit(20)
+
+
+--- update :
+db.emp.update({"name":"Meshal"}, {"job":"San"})
+
+db.emp.update({"name":"Meshal"}, {$set:{"job":"San"}})
+db.emp.update({"name":"Meshal"}, {$inc: {"age":1}})
+db.emp.update({"name":"Meshal"}, {$unset: {"age":1}})
+
+
+
+
+---- Arrays
+db.arrays.insert({_id:0, a:[1,2,3,4]})
+
+// specific element
+db.arrays.update({ _id:0 }, { $set: {"a.3":5}})
+

@@ -1,0 +1,1057 @@
+-- show title only. you have to disable _id cuz it's default :
+
+db.travel.find({}, {"title:1", "_id:0"})
+
+
+db.travel.find({}, {"num_comments":1, "_id":0})
+
+
+
+
+-- show title only where "num_comments" > 100 . you have to disable _id cuz it's default :
+db.travel.find({"num_comments":{$gte:100}}, {"title":1}).pretty()
+
+
+-- show title only where "num_comments" < 200 and > 50 . you have to disable _id cuz it's default :
+db.travel.find({"num_comments":{$gte:50, $lte:200}}, {"title":1}).pretty()
+
+
+-- show title only where "num_comments" < 200 and > 50  & is_self=false. you have to disable _id cuz it's default ("false" is wrong !!):
+db.travel.find( { $and : [ {"num_comments":{$gte:50, $lte:200}} , {"is_self":false} ] } )
+
+db.travel.find( { $and : [ {"num_comments":{$gte:50, $lte:200}} , {"is_self":false} ] } ).pretty()
+
+db.travel.find( { $and : [ {"num_comments":{$gte:50, $lte:200}} , {"is_self":false} ] } ).count()
+
+
+
+-- show title only where "num_comments" < 200 and > 50  OR is_self=false. you have to disable _id cuz it's default ("false" is wrong !!):
+db.travel.find( { $or : [ {"num_comments":{$gte:50, $lte:200}} , {"is_self":false} ] } )
+db.travel.find( { $or : [ {"num_comments":{$gte:50, $lte:200}} , {"is_self":false} ] } ).count()
+db.travel.find( { $or : [ {"num_comments":{$gte:50, $lte:200}} , {"is_self":false} ] } ).pretty()
+
+
+-- set (what if we don't pass $set !! >> it means it will replace the entire doc be careful)
+# this will only update one doc
+db.travel.update( { $and : [ {"num_comments":{$gte:50, $lte:200}} , {"is_self":false} ] } , { $set : {"num_reports": 5} })
+
+# this will update all doc that meet the filter
+db.travel.update( { $and : [ {"num_comments":{$gte:50, $lte:200}} , {"is_self":false} ] } , { $set : {"num_reports": 5} }, {multi:true})
+
+-----------------------------------------------------------------
+-- reg exp : author starts with "t" >> cs
+db.travel.find( { "author" : {$in : [/^t/]} })
+db.travel.find( { "author" : {$in : [/^t/]} }, {"author":1, "_id":0} ).pretty()
+
+
+-- reg exp : author starts with "t" >> ci
+db.travel.find( {"author" : { $in : { [ /^t/i ] } } } )
+db.travel.find( { "author" : { $in : [/^t/i] } } , {"author":1, "_id":0} ).pretty()
+
+
+-- reg exp : author starts either "t" or "s" >>> ci
+db.travel.find ( { "author" : { $in : [/^t/i, /^s/i,] } } )
+db.travel.find ( { "author" : { $in : [/^t/i, /^s/i,] } } , {"author":1, "_id":0} ).pretty()
+
+-- reg exp : author contains "s" >> ci
+db.travel.find( { "author" : { $in : [/s/i] }} )
+db.travel.find( { "author" : { $in : [/s/i] }}  , {"author":1, "_id":0} ).pretty()
+
+
+-----------------------------------------------------------------
+-- sorting
+
+db.travel.aggregate([{$sort : {"author" : 1}}])
+
+db.travel.aggregate([{$sort : {"author" : 1}}] , {"author":1, "_id":0} ).pretty()
+
+
+db.travel.find({ $or : [ {author: {$in : [/^t/i]}}, {"is_self":false} ] }).sort({"author":-1})
+db.travel.find({ $or : [ {author: {$in : [/^t/i]}}, {"is_self":false} ] }, {"author":1, "is_self":1, "_id":0}).sort({"author":-1})
+
+-----------------------------------------------------------------
+------ Limit & skip
+db.travel.find({ $or : [ {author: {$in : [/^t/i]}}, {"is_self":false} ] }, {"author":1, "is_self":1, "_id":0}).sort({"author":-1}).limit(2)
+
+
+db.travel.find({ $or : [ {author: {$in : [/^t/i]}}, {"is_self":false} ] }, {"author":1, "is_self":1, "_id":0}).sort({"author":-1}).limit(2).skip(3)
+
+-----------------------------------------------------
+--- delete doc, remove collection
+db.travel.remove() >> will truncate the collection
+db.travel.remove({"is_self":false}) >> will remove docs the meet the condition
+
+--------------------------------------
+
+
+db.help()
+
+use students
+db.dropDatabase()
+
+mongoimport --db reddit --collection reddit_documentries < reddit_documentries.json
+
+mongoimport --db students --collection grades < grades.json
+
+
+
+db.reddit_documentries.find({"kind":"Listing",  "data":{"children.data":{"id":"3eoy9o"}}})
+
+
+db.reddit_documentries.find({}, {"data.modhash.children.data.secure_media.oembed.title":1})
+
+
+db.reddit_documentries.find({},{"data.children.data.secure_media.oembed.title":1})
+
+db.reddit_documentries.find({},{"data.children.data.secure_media.oembed.title":1}, {"data.children.data.secure_media.oembed":0},
+{"data.children.data.secure_media":0}, {"data.children.data":0}, {"data.children":0}, , {"data":0})
+
+
+db.reddit_documentries.find({"data.children.kind":"t3"},{"data.children.data.secure_media.oembed.title":1})
+
+
+
+----------------------------------------------------
+-- aggregate :
+http://afshinm.name/mongodb-aggregation
+
+
+
+/*****************************************************************************************/
+
+mongorestore >> doesn't work like this in v3
+mongorestore -d [db name] [dump folder path]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var schematodo = db.reddit_documentries.findOne()
+for (var key in schematodo) { print (key, typeof key) ; }
+
+
+
+
+
+
+
+
+
+/************************************************************************/
+
+Week 2 :
+
+-- insert :
+db.teachers.insert({"_id":7, "name":"Ahmed", "age":35, "hobbies":["swimming", "soccer", "painting"], "add":{"Chicago":"IL", "NYC":"NY", "Ames":"IA"}})
+
+	>>> then you can use DOT notation :
+	db.teachers.findOne({"add.Chicago":"IL"})
+
+	>>>
+	db.teachers.find({"add.Chicago":"IL"}, {"age":1, "_id":0})
+
+	>>>
+	db.teachers.find({$or : [{"name":"Matar"}, {"name":"Ahmed"}]})
+
+	>>>
+	db.teachers.find({$or : [{"age":32}, {"age":50}]})
+
+	>> $or with DOT notation
+	db.teachers.find({$or : [{"hobbies":"soccer"}, {"add.NYC":"NY"}]})
+
+	>> $or with $exists
+	db.teachers.find({$or : [{"hobbies":{$exists:true}}, {"add.NYC":"NY"}]})
+
+	>> $and , $or, $exists
+	db.teachers.find({$and : [{"age":{$exists:true}}, {"add.NYC":"NY"}]})
+	db.teachers.find({$and : [{"age":{$exists:true}}, {"add.NYC":"NY"}]})
+
+	>> $in .. Array but we can use it with anything
+	db.teachers.find({"hobbies":{$in:["soccer"]}})
+
+	>> $all .. only with array
+	db.teachers.find({"hobbies":{$all:["soccer", "painting"]}})
+
+
+
+-- name has "a", and doc has "email" field !
+db.peopel.find( { name:{$regex : "a"}, email:{$exists:true} } )
+
+-- or
+db.peopel.find( { $or : [{ name:{$regex : "a"}}, { email:{$exists:true} }] } )
+
+db.scores.find( { $or : [ {score : {$lt : 50} }, {score : {$gt : 90} } ] } )
+
+
+-- $all : using with Array
+db.people.find( { fav : { $all : ["beer", "coke"] } } )
+
+
+-- $in : not neccessay Array 
+db.find.people({ name : { $in : ["Ahmed", "Matar"] } })
+
+
+-- Dot Notation ( for embded docs )
+-- query by example
+db.peopl.find({"email.work": "matar@linux.com"})
+
+db.catalog.find({ price:{$gt:10000}, "reviews.rating":{$gte:5} })
+
+
+-- count
+db.scores.count( { type:"essay" , score:{$gt:90}} )
+
+
+
+
+-- data from reddit :
+curl https://www.reddit.com/r/technology/.json > reddit1.json
+
+cat reddit1.json | python -m json.tool
+
+
+
+
+/************************************************************************/
+
+
+week 3 :
+
+mongoimport -db school -collection students < students.json
+
+
+
+
+
+
+
+/************************************************************************/
+
+
+Week 4
+
+> db.students.find({student_id:5}).explain()
+> db.students.find({student_id:5}).explain(true)
+
+---------------------------------------------
+db.students.getIndexes()
+
+---------------------------------------------
+
+db.students.createIndex({student_id:1})
+
+--  properties of the index
+db.students.createIndex({name:-1}, {background:true})
+db.students.createIndex({name:1}, {name: "nameIdx", background:true})
+
+
+
+-- expalin :
+db.students.find({name:"Denisha Cast"},{name:1}).explain()
+db.students.find({name:"Denisha Cast"}).explain(true)
+
+
+ -- combind index
+db.students.createIndex({student_id:1, class_id:-1})
+
+---------------------------------------------
+
+db.students.dropIndex("student_id_1")
+
+
+
+
+
+--------------------------------------------
+
+
+# multikey index
+db.foo.insert({a:1, b:2})
+db.foo.find()
+db.foo.createIndex({a:1, b:1})
+db.foo.find({a:1, b:1}).explain()
+
+
+
+-- Dot Notation & multikey index ( index on array ) 
+db.students.createIndex({'scores.score' : 1})
+
+--------------------------------------------
+
+
+
+
+# unique
+db.students.createIndex({student_id:1, class_id:1}, {unique:true})
+
+
+
+db.students.stats()
+
+
+---------------
+
+# Location 2D indexes :
+
+
+
+-------------------------------
+
+# mongotop
+
+
+for i in range(4000000, 5000000) :
+	doc = foo.find_one({'studnet_id':i})
+	print("first score for stude", doc['student_id'], "is", doc['scores'][0]{'score'})
+	
+
+
+
+-----------------
+# hw4.4 
+db.profile.find({ns:/school2.students/}).sort({millis:-1}).pretty()
+
+
+
+# -- hw4.3
+db.posts.createIndex({"date":-1})
+
+
+db.posts.createIndex({"tags":1})
+
+
+db.posts.createIndex({"permalink":1}, {unique: true})
+
+
+db.posts.createIndex( { tags:1, date: -1})
+
+
+
+# Week 5  /************************************************************************/
+
+
+
+
+
+db.products.aggregate([ {$group : 	{_id:$manufacturer", num_products 	: 	{$sum:1}} } ])
+db.products.aggregate([ {$group : 	{_id:{"manufacture":"$manufacturer"}, num_products 	: 	{$sum:1}} } ]) ## more readable
+db.products.aggregate([ { $group : {_id:"$category", num_products : {$sum:1}} } ])
+
+
+-- compound grouping --------------------------------------------------------------------------------------------------------------- :
+db.products.aggregate([ {$group : 	{_id:{"maker" : "$manufacturer", "category":"$category" } , num_products 	: 	{$sum:1}} } ])
+
+
+-- $sum --------------------------------------------------------------------------------------------------------------- :
+db.products.aggregate( [ {$group : { _id:{"maker":"$manufacturer"}, sum_prices :{$sum:"$price"}  } } ] )
+
+
+###db.zips.aggregate( [ {$group : {_id : {"state":"$state"}     , population : {$sum:"$pop"} } } ] )
+db.cities.aggregate( [ {$group : {_id : {"state":"$state"}     , population : {$sum:"$pop"} } } ] )
+
+
+-- $using avg  --------------------------------------------------------------------------------------------------------------- :
+db.products.aggregate ( [ {$group : {_id : {"category":"$category"} , avg_prices : {$avg:"$price"} } } ] )
+db.cities.aggregate( [ {$group : {_id : {"state":"$state"}     , avg_population : {$avg:"$pop"} } } ] )
+
+
+-- using $addToSet  --------------------------------------------------------------------------------------------------------------- :
+db.products.aggregate ( [ { $group : { _id : {"maker" : "$manufacturer"} ,  category : {$addToSet : "$category"}} } ] )
+
+db.cities.aggregate ( [ { $group : { _id : { "city": "$city"}, zip : {$addToSet : "$_id"} } } ] ) # zip in each city !!
+db.cities.aggregate ( [ { $group : { _id : "$city", zip : {$addToSet : "$_id"} } } ] ) # zip in each city !!
+
+
+-- using $push ( smiliar to $addToSet, but it allows duplicate ) --------------------------------------------------------------------------------------------------------------- :
+db.products.aggregate ( [ { $group : { _id : {"maker" : "$manufacturer"} ,  category : {$push : "$category"}} } ] )
+
+
+-- using $max , $min --------------------------------------------------------------------------------------------------------------- :
+db.products.aggregate( [ {$group : { _id:{"maker":"$manufacturer"}, maxprice :{$max:"$price"}  } } ] )
+db.cities.aggregate( 	[ {$group : {_id :"$state" , 	max_population : {$max:"$pop"} }} ] )
+
+-- double $group stage --------------------------------------------------------------------------------------------------------------- :
+db.grades.aggregate([ {'$group':{_id:{class_id:"$class_id", student_id:"$student_id"}, 'average':{"$avg":"$score"}}},
+    				  {'$group':{_id:"$_id.class_id", 'average':{"$avg":"$average"}}}])
+
+
+db.grades.aggregate([{'$group':{_id:{class_id:"$class_id", student_id:"$student_id"}, 'average':{"$avg":"$score"}}}]) ### --- first $group stage
+
+
+Quiz :
+db.fun.find()
+{ "_id" : 0, "a" : 0, "b" : 0, "c" : 21 }
+{ "_id" : 1, "a" : 0, "b" : 0, "c" : 54 }
+{ "_id" : 2, "a" : 0, "b" : 1, "c" : 52 }
+{ "_id" : 3, "a" : 0, "b" : 1, "c" : 17 }
+{ "_id" : 4, "a" : 1, "b" : 0, "c" : 22 }
+{ "_id" : 5, "a" : 1, "b" : 0, "c" : 5 }
+{ "_id" : 6, "a" : 1, "b" : 1, "c" : 87 }
+{ "_id" : 7, "a" : 1, "b" : 1, "c" : 97 }
+
+
+
+db.fun.aggregate([{$group:{_id:{a:"$a", b:"$b"}, c:{$max:"$c"}}}, {$group:{_id:"$_id.a", c:{$min:"$c"}}}]) >>>>>>> 52 and 22
+
+
+
+-- $project  --------------------------------------------------------------------------------------------------------------- :
+
+db.products.aggregate ( [ { 
+							$project : { _id:0, "maker":{$toLower : "$manufacturer"}, 
+										"details": {"category":"$category", "price":{"$multiply":["$price",10]}}, 
+										"item":"$name" } 
+					  }  ] )
+
+## wrong ! >> db.cities.aggregate ( [ { $project : {_d:0, "city":{$toLower:"$city"}, "pop":"$pop", "state":{"$toUpper":"$state"}, "zip":"$_id" } } ] )
+
+db.cities.aggregate ( [ { $project : {_id:0, "city":{$toLower:"$city"}, "pop":1, "state":1, "zip":"$_id" } } ] )
+
+
+
+-- $match  --------------------------------------------------------------------------------------------------------------- :
+
+db.cities.aggregate([{$match:{state:"CA"}}])
+
+db.cities.aggregate([{$match:{state:"CA"}},       
+					 {$group:{_id: "$city",population: {$sum:"$pop"},zip_codes: {$addToSet: "$_id"}}
+					}])
+
+## make it pretty, by renaming _id
+db.cities.aggregate([
+					 {$match:{state:"CA"}},       
+					 {$group:{_id: "$city",population: {$sum:"$pop"},zip_codes: {$addToSet: "$_id"}}},
+					     {$project:{_id: 0,city: "$_id",population: 1,zip_codes:1}}
+					])
+
+db.zips.aggregate([{$match:{pop:{$gt:100000}}}])
+
+
+-- $text  --------------------------------------------------------------------------------------------------------------- :
+db.sentences.aggregate( [ { $match : {$text : {$search: "tree rat"}} },
+						  { $project : {words : 1, _id:0} }
+						 ] )
+
+
+** note :- words key doesn't appear in $match because in full search text (fst) you have maximum of one fst in each collection !
+
+** refine the query by sorting by textScore (strongest match appears first):
+db.sentences.aggregate( [ { $match : {$text : {$search: "tree rat"}} },
+						  { $sort : {$score : {$meta : "textScore"}} },
+						  { $project : {words : 1, _id:0} }
+						 ] )
+
+
+
+### you can prepare .js script then pass it via shell :
+mongo < text.js
+
+text.js :
+use dbName;
+query;
+
+
+# Quiz: Using $text
+
+Which of the following statements are true about using a $text operator in the aggregation pipeline
+
+
+$text is only allowed in the $match stage of the aggregation pipeline  ** (correct)
+$text is only allowed within a $match that is the first stage of the aggregation pipeline  ** (correct)
+
+$text can be used without an underlying full text search index when used in conjunction with aggregation
+the results of $text are always sorted according by search match quality
+
+-- $sort  --------------------------------------------------------------------------------------------------------------- :
+db.cities.aggregate([
+    {$match:{state:"NY"}},
+    {$group:{_id: "$city",population: {$sum:"$pop"}}},
+    {$project:{_id: 0,city: "$_id",population: 1}},
+    {$sort:{population:-1}}
+    ])
+
+
+# aggregation with one stage (sort) :
+db.zips.aggregate( [ { $sort: { state:1, city:1 } } ] )
+
+
+-- $skip, $limit  --------------------------------------------------------------------------------------------------------------- :
+db.cities.aggregate([
+    {$match:{state:"NY"}},
+    {$group:{_id: "$city",population: {$sum:"$pop"}}},
+    {$project:{_id: 0,city: "$_id",population: 1}},
+    {$sort:{population:-1}},
+    {$skip : 10},
+    {$limit : 5}
+    ])
+
+
+Quiz : Suppose you change the order of skip and limit in the query shown in the lesson, to look like this: ??
+0
+
+
+
+-- $first, $last  --------------------------------------------------------------------------------------------------------------- :
+
+db.cities.aggregate([
+    /* get the population of every city in every state */
+    {$group:
+     {
+	 _id: {state:"$state", city:"$city"},
+	 population: {$sum:"$pop"},
+     }
+    },
+
+     /* sort by state, population */
+    {$sort: 
+     {"_id.state":1, "population":-1}
+    },
+
+    /* group by state, get the first item in each group */
+    {$group: 
+     {
+	 _id:"$_id.state",
+	 city: {$first: "$_id.city"},
+	 population: {$first:"$population"}
+     }
+    },
+
+    /* sort by state */
+    {$sort :
+     {
+     "_id":1
+     }
+
+    }
+])
+
+
+** refine the example to $project and rename _id !!
+
+
+
+
+-- $unwind  --------------------------------------------------------------------------------------------------------------- :
+use blog;
+db.posts.aggregate([
+    /* unwind by tags */
+    {"$unwind":"$tags"},
+
+    /* now group by tags, counting each tag */
+    {"$group": 
+     {"_id":"$tags",
+      "count":{$sum:1}
+     }
+    },
+
+    /* sort by popularity */
+    {"$sort":{"count":-1}},
+
+    /* show me the top 10 */
+    {"$limit": 10},
+
+    /* change the name of _id to be tag */
+    {"$project":
+     {_id:0,
+      'tag':'$_id',
+      'count' : 1
+     }
+    }
+
+    ])
+
+
+
+
+# quiz : Which grouping operator will enable to you to reverse the effects of an unwind?
+$push
+
+
+
+-- double $unwind  --------------------------------------------------------------------------------------------------------------- :
+.js file :
+use agg;
+db.inventory.drop();
+db.inventory.insert({'name':"Polo Shirt", 'sizes':["Small", "Medium", "Large"], 'colors':['navy', 'white', 'orange', 'red']})
+db.inventory.insert({'name':"T-Shirt", 'sizes':["Small", "Medium", "Large", "X-Large"], 'colors':['navy', "black",  'orange', 'red']})
+db.inventory.insert({'name':"Chino Pants", 'sizes':["32x32", "31x30", "36x32"], 'colors':['navy', 'white', 'orange', 'violet']})
+
+
+ex :
+db.inventory.aggregate([
+    {$unwind: "$sizes"},
+    {$unwind: "$colors"},
+    {$group: 
+     {
+	'_id': {'size':'$sizes', 'color':'$colors'},
+	'count' : {'$sum':1}
+     }
+    }
+])
+
+
+# reverse with $push
+db.inventory.aggregate([
+    {$unwind: "$sizes"},
+    {$unwind: "$colors"},
+    /* create the color array */
+    {$group: 
+     {
+	'_id': {name:"$name",size:"$sizes"},
+	 'colors': {$push: "$colors"},
+     }
+    },
+    /* create the size array */
+    {$group: 
+     {
+	'_id': {'name':"$_id.name",
+		'colors' : "$colors"},
+	 'sizes': {$push: "$_id.size"}
+     }
+    },
+    /* reshape for beauty */
+    {$project: 
+     {
+	 _id:0,
+	 "name":"$_id.name",
+	 "sizes":1,
+	 "colors": "$_id.colors"
+     }
+    }
+])
+
+
+# reverse with $addToSort
+db.inventory.aggregate([
+    {$unwind: "$sizes"},
+    {$unwind: "$colors"},
+    {$group: 
+     {
+	'_id': "$name",
+	 'sizes': {$addToSet: "$sizes"},
+	 'colors': {$addToSet: "$colors"},
+     }
+    }
+])
+
+
+
+
+
+-- $out  --------------------------------------------------------------------------------------------------------------- :
+
+db.products.aggregate ( [ {$group : {_id : {"category":"$category"} , avg_prices : {$avg:"$price"} } }, {$out:"aggregationOut"} ] )
+
+
+-- aggregation options  --------------------------------------------------------------------------------------------------------------- :
+
+#-- explain (note : after the array !)
+db.products.aggregate ( [ {$group : {_id : {"category":"$category"} , avg_prices : {$avg:"$price"} } } ],
+						{explain:true} )
+
+#-- allowDiskUse
+db.products.aggregate ( [ {$group : {_id : {"category":"$category"} , avg_prices : {$avg:"$price"} } } ],
+						{allowDiskUse:true} )
+
+
+
+
+
+-- python & aggregation   --------------------------------------------------------------------------------------------------------------- :
+
+import pymongo
+
+print(pymongo.version)
+
+connection = pymongo.MongoClient()
+db = connection.usa
+
+res = db.cities.aggregate( [ {"$group" : {"_id" : {"state":"$state"}     , "population" : {"$sum":"$pop"} } } ] )
+
+for i in res :
+	print(i)
+
+
+# -- you have to use "" ----> "$group"  -----> NOT ----> $grouo 
+# by default, pymonog 3.0 + returns aggregation reslut in a cursor not one big doc 
+
+
+
+
+
+
+-- HW   --------------------------------------------------------------------------------------------------------------- :
+5.1 :
+mongoimport -d blog -c posts --drop posts.json
+
+db.posts.aggregate([ 	{$unwind : "$comments"}, 
+						{$project : {"comments":1, "_id":0}} ,  
+						{$group : {"_id":"$comments.author", "count" : {$sum:1}}},
+						{$sort : {"count":1}}
+					])
+
+
+5.2
+
+# wrong answer 
+db.zips.aggregate([{$match:{state:{$in : ["CA", "NY"]}, pop:{$gt:25000}}}, {$group : {_id:{city:"$city"}, population:{$sum:"$pop"}}}, {$group : {_id:{city:"$city"}, avr : {$avg:"$population"}}} ])
+
+
+# correct
+db.zips.aggregate([	
+					{$group : {"_id":{state:"$state", city:"$city"}, pop:{"$sum":"$pop"}}},
+					{$match:{pop:{$gt:25000}, "_id.state":{$in : ["CA", "NY"]}}},
+					{$group : {_id:null, avg : {$avg:"$pop"}}}
+				])
+
+
+
+5.3
+
+db.grades.aggregate([
+					 {"$unwind" : "$scores"},
+					 {"$match" : {"scores.type":{$in : ['exam', 'homework']}}},
+					 {"$group" : {"_id" : {"class":"$class_id", "student":"$student_id"}, "student_avg" : {"$avg":"$scores.score"}} },
+					 {"$group" : {"_id" : "$_id.class", "class_avg": {"$avg":"$student_avg"}} },
+					 {"$sort" : {"class_avg":-1}}
+
+					])
+
+# using $ne
+db.grades.aggregate([
+					 {"$unwind" : "$scores"},
+					 {"$match" : {"scores.type":{$ne : ['exam', 'homework']}}},
+					 {"$group" : {"_id" : {"class":"$class_id", "student":"$student_id"}, "student_avg" : {"$avg":"$scores.score"}} },
+					 {"$group" : {"_id" : "$_id.class", "class_avg": {"$avg":"$student_avg"}} },
+					 {"$sort" : {"class_avg":-1}}
+
+					])
+
+
+
+5.4
+
+db.zips.aggregate([
+					{$project: {first_char: {$substr : ["$city",0,1]}, "city":1, "pop":1}},
+					{"$match":{"first_char":{$regex:'[0-9]'}}},
+					{"$group" : {"_id":null, "sum":{"$sum":"$pop"}}}
+
+				 ])
+
+
+
+# Week 6  /************************************************************************/
+
+--------------------------------- create re replica :
+-----------------------------------------------------
+
+* run the bash script to create replica set 
+* now 3 servers are created and running but they don't know about each others .. you can't initialize replica from host that 
+can't be primary : priotirty = 0
+* we need to initialize using configuration.js
+
+
+
+-- get replica status
+rs.status()
+
+
+-- connect to secondary and try write
+mongo
+ db.peopl.insert({'name':'matar'}) >> will work find
+
+-- connect to secondary and try read
+mongo --port 27018
+db.peopl.find() >> will fail, because by ddefualt reads not allowed on secondary  >> Error: error: { "$err" : "not master and slaveOk=false", "code" : 13435 }
+
+* we want to allow this connection reads from secondary :
+rs.slaveOk()
+
+-- connect to secondary and try write
+ mongo --port 27018
+ db.peopl.insert({'name':'matar'}) >> will fail, writes not allowed on secondary
+
+
+--------------------------------- replica set internals :
+--------------------------------------------------------
+
+ps -ef | grep mongod
+
+* oplog collection
+db.oplog.rs.find()
+
+* simulate failover/election process
+kill (node process id)
+
+
+* you can get the node up by issuing same command that was used to create the node :
+
+mongod --replSet m101 --logpath "1.log" --dbpath /home/matar/data/rs1 --port 27017 --oplogSize 64 --fork
+
+
+
+--------------------------------- Connecting to a Replica Set from Pymongo  :
+----------------------------------------------------------------------------
+
+
+If you leave a replica set node out of the seedlist within the driver, what will happen?
+The missing node will be discovered as long as you list at least one valid node.
+
+
+
+--------------------------------- What Happens When Failover Occurs :
+---------------------------------------------------------------------
+
+* to force node to not be Primary :
+rs.stepDown()
+
+
+* we lost all insertions
+
+What will happen if the following statement is executed in Python during a primary election?
+db.test.insert_one({'x':1})
+
+
+Insert will fail, program will terminate
+
+
+
+--------------------------------- Detecting Failover  :
+------------------------------------------------------
+* we use try .. except
+
+* but we lost the insertions where election was taking place !! not proper way to handl that !
+
+If you catch exceptions during failover, are you guaranteed to have your writes succeed?
+No
+
+
+
+--------------------------------- Proper Handling of Failover for Inserts  :
+---------------------------------------------------------------------------
+
+Assuming a setup similar to that shown in the lesson, Is this python code guaranteed to get the write done if failover occurs:
+
+     doc = {'_id':1}
+     for retry in range (3):
+        try:
+            things.insert_one(doc)
+            time.sleep(.1)
+            break
+        except pymongo.errors.AutoReconnect as e:
+            print "Exception ",type(e), e
+            print "Retrying.."
+            time.sleep(5)
+        except pymongo.errors.DuplicateKeyError as e:
+            break
+
+??
+
+No
+
+what if failover takse time more than retry time !!!!!
+
+
+
+--------------------------------- Proper Handling of Failover for Reads  :
+---------------------------------------------------------------------------
+
+
+
+
+
+--------------------------------- Proper Handling of Failover for update  :
+---------------------------------------------------------------------------
+
+
+If you want to be sure that an update with a $inc occurred exactly once in the face of failover, what's the best way to do it?
+Transform the update into a statement that is idempotent
+
+
+
+--------------------------------- write concerns:
+-------------------------------------------------
+If you set w=1 and j=1, is it possible to wind up rolling back a committed write to the primary on failover?
+
+Yes
+---
+
+
+Write concern (w) value can be set at client, database or collection level within PyMongo. When you call MongoClient, you get a connection to the driver, but behind the scenes, PyMongo connects to multiple nodes of the replica set. The w value can be set at the client level. Andrew says that the w concern can be set at the connection level; he really means client level. It's also important to note that wtimeout is the amount of time that the database will wait for replication before returning an error on the driver, but that even if the database returns an error due to wtimeout, the write will not be unwound at the primary and may complete at the secondaries. Hence, writes that return errors to the client due to wtimeout may in fact succeed, but writes that return success, do in fact succeed. Finally, the video shows the use of an insert command in PyMongo. That call is deprecated and it should have been insert_one.
+
+
+
+--------------------------------- read preferences:
+-------------------------------------------------
+You can configure your applications via the drivers to read from secondary nodes within a replica set. What are the reasons that you might not want to do that? Check all that apply.
+
+If your write traffic is significantly greater than your read traffic, you may overwhelm the secondary, which must process all the writes as well as the reads. Replication lag can result. 
+You may not read what you previously wrote to MongoDB. 
+If the secondary hardware has insufficient memory to keep the read working set in memory, directing reads to it will likely slow it down. 
+
+
+
+
+--------------------------------- Review of Implications of Replication :
+-----------------------------------------------------------------------
+One thing to remember is that the driver will check, upon attempting to write, whether or not its write concern is valid. It will error if, for example, w=4 but there are 3 data-bearing replica set members. This will happen quickly in both the Java and pymongo drivers. Reading with an invalid readPreference will take longer, but will also result in an error. Be aware, though, that this behavior can vary a little between drivers and between versions.
+
+
+
+--------------------------------- Introduction to Sharding :
+------------------------------------------------------------
+If the shard key is not included in a find operation and there are 4 shards, each one a replica set with 3 nodes, how many nodes will see the find operation?
+
+The answer is 4. Since the shard key is not included in the find operation, mongos has to send the query to all 4 of the shards. Each shard has 3 replica-set members, but only one member of each replica set (the primary, by default) is required to handle the find.
+
+
+
+
+--------------------------------- Building a Sharded Environment:
+------------------------------------------------------------
+
+If you want to build a production system with two shards, each one a replica set with three nodes, how may mongod processes must you start?
+9
+
+6 for nodes
+3 from config servers
+
+
+---
+
+Suppose you wanted to shard the zip code collection after importing it. You want to shard on zip code. What index would be required to allow MongoDB to shard on zip code?
+
+* An index on zip or a non-multi-key index that starts with zip.
+
+
+--
+
+Suppose you want to run multiple mongos routers for redundancy. What level of the stack will assure that you can failover to a different mongos from within your application?
+* drivers
+
+
+
+
+--------------------------------- Choosing a Shard Key :
+------------------------------------------------------------
+You are building a facebook competitor called footbook that will be a mobile social network of feet. You have decided that your primary data structure for posts to the wall will look like this:
+
+{'username':'toeguy',
+     'posttime':ISODate("2012-12-02T23:12:23Z"),
+     "randomthought": "I am looking at my feet right now",
+     'visible_to':['friends','family', 'walkers']}
+Thinking about the tradeoffs of shard key selection, select the true statements below.
+
+(true) Choosing posttime as the shard key will cause hotspotting as time progresses.
+(true) Choosing username as the shard key will distribute posts to the wall well across the shards.
+(true) Choosing visible_to as a shard key is illegal.
+
+(false) Choosing posttime as the shard key suffers from low cardinality.
+
+
+
+
+
+
+
+************************* hw ************
+Homework: Homework 6.1
+Which of the following statements are true about replication in MongoDB? Check all that apply.
+
+(true) The minimum sensible number of voting nodes to a replica set is three.
+(false) MongoDB replication is synchronous.
+(true) By default, using the new MongoClient connection class, w=1 and j=1.
+(false) The oplog utilizes a capped collection.
+
+
+----
+Homework: Homework 6.2
+Let's suppose you have a five member replica set and want to assure that writes are committed to the journal and are acknowledged by at least 3 nodes before you proceed forward. What would be the appropriate settings for w and j?
+
+w=1, j=1
+w="majority", j=1 ****** correct
+w=3, j=0
+w=5, j=1
+w=1,j=3
+
+
+----
+Homework: Homework 6.3
+
+Which of the following statements are true about choosing and using a shard key?
+
+
+(true) Any update that does not contain the shard key will be sent to all shards.
+You can change the shard key on a collection if you desire.
+The shard key must be unique
+(true) There must be a index on the collection that starts with the shard key.
+(true) MongoDB can not enforce unique indexes on a sharded collection other than the shard key itself, or indexes prefixed by the shard key.
+
+
+----
+Homework: Homework 6.4
+
+You have a sharded system with three shards and have sharded the collections "students" in the "school" database across those shards. The output of sh.status() when connected to mongos looks like this:
+
+mongos> sh.status()
+--- Sharding Status --- 
+  sharding version: {
+	"_id" : 1,
+	"minCompatibleVersion" : 5,
+	"currentVersion" : 6,
+	"clusterId" : ObjectId("5531512ac723271f602db407")
+}
+  shards:
+	{  "_id" : "s0",  "host" : "s0/localhost:37017,localhost:37018,localhost:37019" }
+	{  "_id" : "s1",  "host" : "s1/localhost:47017,localhost:47018,localhost:47019" }
+	{  "_id" : "s2",  "host" : "s2/localhost:57017,localhost:57018,localhost:57019" }
+  balancer:
+	Currently enabled:  yes
+	Currently running:  yes
+		Balancer lock taken at Fri Apr 17 2015 14:32:02 GMT-0400 (EDT) by education-iMac-2.local:27017:1429295401:16807:Balancer:1622650073
+	Collections with active migrations: 
+		school.students started at Fri Apr 17 2015 14:32:03 GMT-0400 (EDT)
+	Failed balancer rounds in last 5 attempts:  0
+	Migration Results for the last 24 hours: 
+		2 : Success
+		1 : Failed with error 'migration already in progress', from s0 to s1
+  databases:
+	{  "_id" : "admin",  "partitioned" : false,  "primary" : "config" }
+	{  "_id" : "school",  "partitioned" : true,  "primary" : "s0" }
+		school.students
+			shard key: { "student_id" : 1 }
+			chunks:
+				s0	1
+				s1	3
+				s2	1
+			{ "student_id" : { "$minKey" : 1 } } -->> { "student_id" : 0 } on : s2 Timestamp(3, 0) 
+			{ "student_id" : 0 } -->> { "student_id" : 2 } on : s0 Timestamp(3, 1) 
+			{ "student_id" : 2 } -->> { "student_id" : 3497 } on : s1 Timestamp(3, 2) 
+			{ "student_id" : 3497 } -->> { "student_id" : 7778 } on : s1 Timestamp(3, 3) 
+			{ "student_id" : 7778 } -->> { "student_id" : { "$maxKey" : 1 } } on : s1 Timestamp(3, 4) 
+
+
+If you ran the query
+use school
+db.students.find({'student_id':2000})
+Which shards would be involved in answering the query?
+
+s0, s1, and s2
+s0
+s1 ********** correct : '			{ "student_id" : 2 } -->> { "student_id" : 3497 } on : s1 Timestamp(3, 2) '
+s2
+
+
