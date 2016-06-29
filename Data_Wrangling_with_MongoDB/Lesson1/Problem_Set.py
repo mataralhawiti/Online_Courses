@@ -20,32 +20,95 @@ You should only change the parse_file function.
 """
 
 
+# import csv
+# import os
+# 
+# 
+# DATADIR = "/home/matar/GitHub/Online_Courses/Data_Wrangling_with_MongoDB/Lesson1/res/"
+# DATAFILE = "745090.csv"
+# 
+# 
+# def parse_file(datafile):
+#     name = ""
+#     data = []
+#     
+#     with open(datafile, 'rt') as f:
+#         reader = csv.reader(f)
+#         for r in reader:
+#             if reader.line_num == 1 :
+#                 name = r[1]
+#             elif reader.line_num == 2:
+#                 pass
+#             else:
+#                 data.append(r)
+#     return (name, data)
+# 
+# 
+# def test():
+#     datafile = os.path.join(DATADIR, DATAFILE)
+#     name, data = pasre_file(datafile)
+#      
+#     assert name == "MOUNTAIN VIEW MOFFETT FLD NAS"
+#     assert data[0][1] == "01:00"
+#     assert data[2][0] == "01/01/2005"
+#     assert data[2][5] == "2"
+#     
+# 
+# if __name__ == '__main__':
+#     test()
+    #pasre_file("/home/matar/GitHub/Online_Courses/Data_Wrangling_with_MongoDB/Lesson1/res/745090.csv")
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 import csv
 import os
 
+DATADIR = "/home/matar/GitHub/Online_Courses/Data_Wrangling_with_MongoDB/Lesson1/res/"
+DATAFILE = "745090.csv"
 
-DATADIR = ""
-DATAFILE = ""
 
-
-def pasre_file(datafile):
+def parse_file(datafile):
     name = ""
     data = []
     
     with open(datafile, 'rt') as f:
-        pass
-    return data
+        reader = csv.reader(f)
+        for r in reader:
+            if reader.line_num == 1 :
+                name = r[1]
+            elif reader.line_num == 2:
+                pass
+            else:
+                data.append(r)
+                
+#     with open(datafile,'rb') as f:
+#         r = csv.reader(f)
+#         name = r.next()[1]
+#         header = r.next()
+#         data = [row for row in r]
+
+    return (name, data)
 
 
 def test():
     datafile = os.path.join(DATADIR, DATAFILE)
-    name, data = pasre_file(datafile)
-    
+    name, data = parse_file(datafile)
+
     assert name == "MOUNTAIN VIEW MOFFETT FLD NAS"
     assert data[0][1] == "01:00"
     assert data[2][0] == "01/01/2005"
     assert data[2][5] == "2"
-    
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     test()
