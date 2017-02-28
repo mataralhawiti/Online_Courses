@@ -157,10 +157,11 @@ def summarise_data(trip_in, station_data, trip_out):
                     ### the expected time values.                         ###
                     trip_date = datetime.strptime(row['Start Date'], '%m/%d/%Y %H:%M')
                     new_point['start_date']  = trip_date.strftime('%Y-%m-%d')
-                    new_point['start_year']  = trip_date.strftime('%Y')
-                    new_point['start_month'] = trip_date.strftime('%m')
-                    new_point['start_hour']  = trip_date.strftime('%H')
-                    new_point['weekday']     = trip_date.strftime('%a')
+                    new_point['start_year']  = trip_date.strftime('%Y') # or : trip_date.year
+                    new_point['start_month'] = trip_date.strftime('%m') # or : trip_date.month
+                    new_point['start_hour']  = trip_date.strftime('%H') # or : trip_date.hour
+                    new_point['weekday']     = trip_date.strftime('%a') # or : trip_date.weekday() OR trip_date.isoweekday()
+
                     
                     # remap start and end terminal with start and end city
                     new_point['start_city'] = station_map[row['Start Terminal']]
