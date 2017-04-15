@@ -27,4 +27,3 @@ def process_map(filename):
 if __name__ == "__main__":
 	users = process_map(oms_file)
 	print(len(users))
-    

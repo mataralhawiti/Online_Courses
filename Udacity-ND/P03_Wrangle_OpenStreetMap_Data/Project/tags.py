@@ -57,20 +57,7 @@ def process_map(filename):
     return keys
 
 
-
-# def test():
-#     # You can use another testfile 'map.osm' to look at your solution
-#     # Note that the assertion below will be incorrect then.
-#     # Note as well that the test function here is only used in the Test Run;
-#     # when you submit, your code will be checked against a different dataset.
-#     keys = process_map('example.osm')
-#     pprint.pprint(keys)
-#     assert keys == {'lower': 5, 'lower_colon': 0, 'other': 1, 'problemchars': 1}
-
-
 if __name__ == "__main__":
     keys = process_map(oms_file)
-    print(keys)
-
-    ''' {'other': 3581, 'lower': 336127, 'lower_colon': 1258410, 'problemchars': 0} '''
-    '''{'lower_colon': 1258410, 'lower': 336127, 'other': 3579, 'problemchars': 2}'''
+    for k, c in keys.items():
+        print(k,c)

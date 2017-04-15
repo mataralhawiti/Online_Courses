@@ -31,18 +31,6 @@ def count_tags(filename):
 
 if __name__ == "__main__":
     tags = count_tags(oms_file)
-    print(tags)
-
-'''
-{'bounds': 1, 'way': 250595, 'osm': 1, 'relation': 851, 'nd': 2346656, 'node': 1800900, 'tag': 1598118, 'member': 17730}
-
-'''
-
-
-'''
-https://docs.python.org/3.4/library/xml.etree.elementtree.html
-http://stackoverflow.com/questions/12792998/elementtree-iterparse-strategy
-http://eli.thegreenplace.net/2012/03/15/processing-xml-in-python-with-elementtree
-https://sqlite.org/cli.html
-
-'''
+    print("Tag", "Count")
+    for t, c in tags.items():
+    	print(t,c)
