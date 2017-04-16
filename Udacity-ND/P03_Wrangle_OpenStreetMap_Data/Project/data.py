@@ -214,12 +214,9 @@ def shape_element(element, node_attr_fields=NODE_FIELDS, way_attr_fields=WAY_FIE
 
           if tag.attrib['k'] == "addr:street":
             node_tags['value'] = audit.update_name(tag.attrib['v'], audit.mapping)
-          else :
-            node_tags['value'] = tag.attrib['v']
-
-          if tag.attrib['k'] == "addr:postcode":
+          elif tag.attrib['k'] == "addr:postcode":
             node_tags['value'] = audit.update_postcode(tag.attrib['v'])
-          else :
+          else : 
             node_tags['value'] = tag.attrib['v']
 
 
@@ -265,6 +262,8 @@ def shape_element(element, node_attr_fields=NODE_FIELDS, way_attr_fields=WAY_FIE
 
             if child.attrib['k'] == "addr:street":
               way_tag['value'] = audit.update_name(child.attrib['v'], audit.mapping)
+            elif child.attrib['k'] == "addr:postcode":
+              way_tag['value'] = audit.update_postcode(child.attrib['v'])
             else :
               way_tag['value'] = child.attrib['v']
 

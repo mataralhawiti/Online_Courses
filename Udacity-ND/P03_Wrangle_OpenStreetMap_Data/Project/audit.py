@@ -117,10 +117,12 @@ def audit_postcode(osmfile):
 def update_postcode(post_code):
     if post_code in ('21090', '20002', '01239','21209;21230') :
         return '00000'
+    else :
+        return post_code
 
 
 
-if __name__ == '__main__':
+#if __name__ == '__main__':
 
     # test street audit
     # streets = audit_street(oms_file)
