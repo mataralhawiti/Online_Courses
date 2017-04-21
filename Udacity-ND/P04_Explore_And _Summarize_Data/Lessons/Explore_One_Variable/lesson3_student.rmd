@@ -28,14 +28,14 @@ names(pf)
 Notes:
 
 ```{r Histogram of Users\' Birthdays}
-# install.packages('ggplot2')
-# install.packages('ggthemes', dependencies = TRUE) 
+#install.packages('ggplot2')
+#install.packages('ggthemes', dependencies = TRUE) 
 
 
 
 # use qplot to create histogram of dob_day
 library(ggplot2)
-library(ggthemes)
+#library(ggthemes)
 
 qplot(x = dob_day, data = pf) +
   scale_x_continuous(breaks = 1:31)
@@ -118,6 +118,7 @@ Notes:
 #### What code would you enter to create a histogram of friend counts?
 
 ```{r Friend Count}
+  qplot( x = friend_count, data = pf)
 
 ```
 
@@ -130,6 +131,7 @@ Response:
 Notes:
 
 ```{r Limiting the Axes}
+ qplot( x = friend_count, data = pf,  xlim = c(1,1000))
 
 ```
 
@@ -140,6 +142,10 @@ Notes:
 
 ### Adjusting the Bin Width
 Notes:
+```{r}
+qplot(x = friend_count, data = pf, binwidth = 25) + 
+  scale_x_continuous(limits = c(0, 1000), breaks = seq(0, 1000, 50))
+```
 
 ### Faceting Friend Count
 ```{r Faceting Friend Count}
@@ -147,7 +153,8 @@ Notes:
 # Add it to the code below.
 qplot(x = friend_count, data = pf, binwidth = 10) +
   scale_x_continuous(limits = c(0, 1000),
-                     breaks = seq(0, 1000, 50))
+                     breaks = seq(0, 1000, 50)) +
+  facet_wrap(~gender)
 ```
 
 ***
