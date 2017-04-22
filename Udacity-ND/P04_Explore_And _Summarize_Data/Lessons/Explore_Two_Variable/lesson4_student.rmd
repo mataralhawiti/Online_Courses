@@ -116,7 +116,7 @@ Notes:
 
 ```{r Conditional Means}
 #install.packages('dplyr')
-#library(dplyr)
+library(dplyr)
 
 pf.fc_by_age <- pf %>%
   group_by(age) %>%
@@ -251,7 +251,7 @@ correlation could help us to decide which variables are related
 
 ```{r More Caution With Correlation}
 #install.packages('alr3')
-#library(alr3)
+library(alr3)
 
 data(Mitchell)
 ?Mitchell
@@ -346,7 +346,7 @@ ggplot(aes(x = age_with_months, y = friend_count_mean ),
   geom_line() #geom_point()
 
 ```
-
+54
 ***
 
 ### Smoothing Conditional Means

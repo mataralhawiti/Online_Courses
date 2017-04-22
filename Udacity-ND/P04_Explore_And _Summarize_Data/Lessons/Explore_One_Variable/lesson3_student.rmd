@@ -1,3 +1,8 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
 Lesson 3
 ========================================================
 
@@ -77,7 +82,7 @@ Response:
 Notes:
 
 ***
-### Faceting
+### Faceting dob
 Notes:
 
 ```{r Faceting}
@@ -87,7 +92,7 @@ Notes:
 
 ```
 
-```{r Faceting}
+```{r Faceting_altrt}
   #Equivalent ggplot syntax: 
   ggplot(data = pf, aes(x = dob_day)) + 
   geom_histogram(binwidth = 1) + 
@@ -297,7 +302,7 @@ Notes:
 Notes:
 ```{r}
 # install.packages('gridExtra') 
-# library(gridExtra) 
+library(gridExtra) 
 ```
 
 ```{r}
