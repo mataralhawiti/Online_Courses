@@ -1,0 +1,142 @@
+---
+title: "P04_Explore_And_Summarize_Data"
+author: "Matar"
+date: "May 1, 2017"
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=12, fig.height=8, fig.path='Figs/',
+                      echo=FALSE, warning=FALSE, message=FALSE)
+```
+
+```{r setup}
+library(ggplot2)
+library(gridExtra) 
+library(dplyr)
+library(reshape2)
+
+```
+
+
+```{r Load the data}
+fl = read.csv('P00000001-FL.csv', row.names = NULL)
+colnames(fl) <- c(colnames(fl)[-1], "x")
+fl$x <- NULL
+```
+
+## Dataset Overview
+```{r}
+dim(fl)
+```
+
+```{r column names}
+names(fl)
+```
+
+```{r Contributions}
+summary(fl)
+```
+
+Our dataset consists of 18 variables, with almost 426,057 observations.
+
+
+Let us see some sample data
+```{r 2 samples}
+
+head(fl, 2)
+```
+
+
+
+According [FEC.gov](http://www.fec.gov/info/contriblimitschart1718.pdfm)  :
+Individual's contribution limit is $2700 so I'll eliminate any negative amounts (refunds) and amounts that exceed the contribution's limit .
+
+```{r clean data by filtering contb_receipt_amt btween 1 and 2700}
+fl_above_zero <- filter(fl, fl$contb_receipt_amt > 0)
+fl_within_FEC_limit <- filter(fl_above_zero, fl_above_zero$contb_receipt_amt <= 2700)
+
+dim(fl_within_FEC_limit)
+
+```
+
+
+## Univariate Plots Section
+### Exploring recieved contribution amount 
+```{r}
+summary(fl_within_FEC_limit$contb_receipt_amt)
+```
+```{r}
+ ggplot(aes(x = contb_receipt_amt), data = fl_within_FEC_limit) + 
+   geom_histogram(fill = '#099DD9')
+```
+
+
+```{r}
+ ggplot(aes(x = contb_receipt_amt), data = fl_within_FEC_limit) + 
+   geom_histogram (color = 'black', fill = '#099DD9')+
+  scale_x_continuous(limits = c(0, 2700), breaks = seq(0, 2700, 100))
+
+```
+
+
+ Frm above, We can see about 120,000 contributor donated about less $145 . 
+ <br>
+ <br>
+
+```{r contributions distrbution for candidates }
+ggplot(aes(x  = contb_receipt_amt), data = fl_within_FEC_limit) +
+  geom_histogram (binwidth = 50, fill = '#099DD9') +
+  facet_wrap(~cand_nm)
+```
+
+Hillary Clinton earned the lion's share of recieved contribution amount among other candidates, followed by Bernard Sanders and Donald Trump. 
+ <br>
+ <br>
+ <br>
+ <br>
+
+### Now, I am going to explore top 10 cities with most contribution number/amount :
+```{r 10 top cities by contribution count}
+count_by_city <- fl_within_FEC_limit %>%
+  group_by(contbr_city) %>%
+  count() %>%
+  arrange(desc(n)) %>%
+  top_n(10)
+
+#head(count_by_city, 10)
+```
+```{r}
+ggplot(aes(x  = contbr_city, y= n), data = count_by_city) +
+  geom_col(fill = '#099DD9') +
+  xlab('City of contribution') +
+  ylab('Number of contributions')
+```
+
+Looking at our barchart, I was surprised that Jacksonville wasn't the city with highest contribution number since it's the largest city in Florida.
+Seeing Miami, Tampa and Orlando among the top 5 made a lot of sense. However, I was a bit shocked that Naples slightly surpassed Jacksonville. One justification I could think of is that Naples is considered of the richest cities in Florida state. 
+ <br>
+ <br>
+ <br>
+
+```{r 10 top cities by sum contribution amount}
+sum_by_city <- fl_within_FEC_limit %>%
+  group_by(contbr_city) %>%
+  summarise(sum  = sum(contb_receipt_amt), 
+            n = n()) %>%
+  arrange(desc(sum)) %>%
+  top_n(10)
+
+#head(sum_by_city, 10)
+```
+
+
+
+```{r}
+ggplot(aes(x  = contbr_city, y= sum), data = sum_by_city) +
+  geom_col(fill = '#099DD9') +
+  scale_y_continuous(breaks = seq(0, 5000000, 500000)) +
+  xlab('City of contribution') +
+  ylab('Total contribution amount in USD')
+```
+Interestingly, two small cities Naples and Boca Raton had significant contribution comparing to other large cities such as Orlando and Jacksonville. 
