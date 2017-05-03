@@ -140,3 +140,46 @@ ggplot(aes(x  = contbr_city, y= sum), data = sum_by_city) +
   ylab('Total contribution amount in USD')
 ```
 Interestingly, two small cities Naples and Boca Raton had significant contribution comparing to other large cities such as Orlando and Jacksonville. 
+
+## Bivariate Plots Section
+```{r preprare contb_receipt_dt }
+# convert contb_receipt_dt to date
+fl_within_FEC_limit$contb_receipt_dt <- as.Date(fl_within_FEC_limit$contb_receipt_dt, "%d-%b-%y")
+
+# add new Month
+fl_within_FEC_limit$Month <- format(as.Date(fl_within_FEC_limit$contb_receipt_dt), "%m")
+
+# add new year
+fl_within_FEC_limit$Year <- format(as.Date(fl_within_FEC_limit$contb_receipt_dt), "%y")
+
+
+# check max and min contb_receipt_dt
+#min(fl_within_FEC_limit$contb_receipt_dt) 2013-10-01
+#max(fl_within_FEC_limit$contb_receipt_dt) 2016-12-31
+
+```
+
+```{r group contribution amount by Month_Yr}
+fl_within_FEC_limit.amt_by_Month_Yr <- fl_within_FEC_limit %>%
+  group_by(Year, Month) %>%
+  summarise(contb_receipt_amt_sum = sum(contb_receipt_amt),
+            contb_receipt_amt_mean = mean(contb_receipt_amt),
+            contb_receipt_amt_median = median(contb_receipt_amt),
+            n = n()) %>%
+  arrange(Year, Month)
+
+#head(fl_within_FEC_limit.amt_by_Month_Yr, 50)
+```
+```{r }
+
+ggplot(aes(x = Year, y = contb_receipt_amt_mean,group = 1), data = fl_within_FEC_limit.amt_by_Month_Yr) + 
+   geom_li()
+```
+
+
+```{r }
+
+ggplot(aes(x = Month, y = contb_receipt_amt_mean,group = 1), data = subset(fl_within_FEC_limit.amt_by_Month_Yr, fl_within_FEC_limit.amt_by_Month_Yr$Year == "16") )+ 
+   geom_line()
+#subset(fl_within_FEC_limit.amt_by_Month_Yr, fl_within_FEC_limit.amt_by_Month_Yr$Year == "16")
+```
