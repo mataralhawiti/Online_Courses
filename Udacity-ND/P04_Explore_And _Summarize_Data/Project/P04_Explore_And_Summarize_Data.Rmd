@@ -4,7 +4,9 @@ author: "Matar"
 date: "May 1, 2017"
 output: html_document
 ---
-
+```{r setwd()}
+setwd('/home/matar/GitHub/Online_Courses/Udacity-ND/P04_Explore_And _Summarize_Data/Project')
+```
 ```{r global_options, include=FALSE}
 knitr::opts_chunk$set(fig.width=12, fig.height=8, fig.path='Figs/',
                       echo=FALSE, warning=FALSE, message=FALSE)
@@ -43,7 +45,6 @@ Our dataset consists of 18 variables, with almost 426,057 observations.
 
 Let us see some sample data
 ```{r 2 samples}
-
 head(fl, 2)
 ```
 
@@ -57,6 +58,8 @@ fl_above_zero <- filter(fl, fl$contb_receipt_amt > 0)
 fl_within_FEC_limit <- filter(fl_above_zero, fl_above_zero$contb_receipt_amt <= 2700)
 
 dim(fl_within_FEC_limit)
+
+head(fl_within_FEC_limit)
 
 ```
 
@@ -103,14 +106,10 @@ count_by_city <- fl_within_FEC_limit %>%
   count() %>%
   arrange(desc(n)) %>%
   top_n(10)
-
-#head(count_by_city, 10)
 ```
 ```{r}
 ggplot(aes(x  = contbr_city, y= n), data = count_by_city) +
-  geom_col(fill = '#099DD9') +
-  xlab('City of contribution') +
-  ylab('Number of contributions')
+  geom_col()
 ```
 
 Looking at our barchart, I was surprised that Jacksonville wasn't the city with highest contribution number since it's the largest city in Florida.
@@ -126,11 +125,155 @@ sum_by_city <- fl_within_FEC_limit %>%
             n = n()) %>%
   arrange(desc(sum)) %>%
   top_n(10)
-
-#head(sum_by_city, 10)
 ```
 
 
+
+```{r}
+ggplot(aes(x  = contbr_city, y= sum), data = sum_by_city) +
+  geom_col() 
+```
+Interestingly, two small cities Naples and Boca Raton had significant contribution comparing to other large cities such as Orlando and Jacksonville. 
+
+<br>
+<br>
+## Bivariate Plots Section
+
+### Exploring contribtuin amount and contributin date :
+
+Let's see how contribution is distrubted across years
+```{r convert contb_receipt_dt to date }
+fl_within_FEC_limit$contb_receipt_dt <- as.Date(fl_within_FEC_limit$contb_receipt_dt, "%d-%b-%y")
+```
+
+```{r add new column : year}
+fl_within_FEC_limit$Year <- format(as.Date(fl_within_FEC_limit$contb_receipt_dt), "%Y")
+```
+
+```{r let us plot group by year}
+ggplot(aes(x = Year, y = contb_receipt_amt), data = fl_within_FEC_limit) + 
+   geom_boxplot()
+```
+
+I expected 2016 to have highest contribution amount mean comparing to other years, since it's the election year and presidential race gets closer as we approach nominees announcement date. However, data proved me wrong as I clearly see 2014 has the highest contribtuon amount mean .
+ <br>
+ <br>
+
+Let me explore election year (2016) further :
+```{r plot contb_receipt_amt of 2016}
+ggplot(aes(x = contb_receipt_dt, y = contb_receipt_amt), data = subset(fl_within_FEC_limit, 
+                                                           fl_within_FEC_limit$Year == '2016')) + 
+   geom_point()
+```
+
+
+
+
+```{r add new column : Month_year}
+fl_within_FEC_limit$Month_year <- format(as.Date(fl_within_FEC_limit$contb_receipt_dt), "%b %Y")
+```
+
+```{r group contribution amount by Month_year}
+fl_within_FEC_limit.amt_by_Month_year <- subset(fl_within_FEC_limit, 
+                                                           fl_within_FEC_limit$Year == '2016') %>%
+  group_by(Month_year) %>%
+  summarise(contb_receipt_amt_sum = sum(contb_receipt_amt),
+            contb_receipt_amt_mean = mean(contb_receipt_amt),
+            contb_receipt_amt_median = median(contb_receipt_amt),
+            n = n()) %>%
+  arrange(Month_year)
+
+```
+
+
+ <br>
+ <br>
+ Let's see monthly sum/mean/median of contribution amount for 2016 :
+```{r plot Month_year for 2016}
+p1 <- ggplot(aes(x = Month_year, y = contb_receipt_amt_sum, group = 1), data = fl_within_FEC_limit.amt_by_Month_year) + 
+   geom_line()
+
+p2 <- ggplot(aes(x = Month_year, y = contb_receipt_amt_mean, group = 1), data = fl_within_FEC_limit.amt_by_Month_year) + 
+   geom_line()
+
+p3 <- ggplot(aes(x = Month_year, y = contb_receipt_amt_median, group = 1), data = fl_within_FEC_limit.amt_by_Month_year) + 
+   geom_line()
+
+grid.arrange(p1, p2, p3, ncol=1)
+
+```
+
+<br>
+<br>
+<br>
+
+### Exploring contribtuin amount and contbr_occupation :
+
+```{r}
+sum_amt_by_occupation <- fl_within_FEC_limit %>%
+  filter(contbr_occupation != 'INFORMATION REQUESTED',
+         contbr_occupation != 'INFORMATION REQUESTED PER BEST EFFORTS') %>%
+  group_by(contbr_occupation) %>%
+  summarise(contb_receipt_amt_sum  = sum(contb_receipt_amt),
+            contb_receipt_amt_mean = mean(contb_receipt_amt),
+            n = n()) %>%
+  arrange(desc(contb_receipt_amt_sum)) %>%
+  top_n(10)
+
+```
+
+```{r plot total amt by occupation using bar chart}
+ggplot(aes(x=contbr_occupation, y=contb_receipt_amt_sum), data=sum_amt_by_occupation) +
+    geom_bar(stat='identity')  
+```
+
+Retireds poured a lot of moeny into the elections, marking themselves as the biggest contributors among differebt occuptaions. Way behind, comes attorneys and then homemakers in the third place.
+
+<br>
+<br>
+Let us what was the mean contribtuions among those top occupations :
+```{r plot mean amt by occupation using bar chart}
+ggplot(aes(x=contbr_occupation, y=contb_receipt_amt_mean), data=sum_amt_by_occupation) +
+    geom_bar(stat='identity')  
+```
+
+Homemakers were the dark horse here by contributing about $460 on avrage. Attorneys followed with average contribution less than $400
+
+
+<br>
+<br>
+## Multivariate Plots Section
+```{r}
+group_by_multi <- fl_within_FEC_limit %>%
+  group_by(contbr_occupation, cand_nm) %>%
+   filter(contbr_occupation != 'INFORMATION REQUESTED',
+         contbr_occupation != 'INFORMATION REQUESTED PER BEST EFFORTS') %>%
+  summarise(contb_receipt_amt_sum  = sum(contb_receipt_amt),
+            contb_receipt_amt_mean = mean(contb_receipt_amt),
+            n = n()) %>%
+    ungroup() %>% # to remove age layer
+  arrange(desc(contb_receipt_amt_sum)) %>%
+  top_n(10)
+
+
+```
+```{r }
+ggplot(aes(x = contbr_occupation, y = contb_receipt_amt_sum),
+       data = group_by_multi)+
+  geom_bar(stat='identity', aes(fill = cand_nm))
+```
+Looks like Donlad Trump was so popular among retired contributor. On the other hand, Sandaers got a lot of contribution from unemployed folks.
+
+
+
+
+
+
+
+
+## Final Plots and Summary
+
+### Plot One
 
 ```{r}
 ggplot(aes(x  = contbr_city, y= sum), data = sum_by_city) +
@@ -139,47 +282,34 @@ ggplot(aes(x  = contbr_city, y= sum), data = sum_by_city) +
   xlab('City of contribution') +
   ylab('Total contribution amount in USD')
 ```
-Interestingly, two small cities Naples and Boca Raton had significant contribution comparing to other large cities such as Orlando and Jacksonville. 
-
-## Bivariate Plots Section
-```{r preprare contb_receipt_dt }
-# convert contb_receipt_dt to date
-fl_within_FEC_limit$contb_receipt_dt <- as.Date(fl_within_FEC_limit$contb_receipt_dt, "%d-%b-%y")
-
-# add new Month
-fl_within_FEC_limit$Month <- format(as.Date(fl_within_FEC_limit$contb_receipt_dt), "%m")
-
-# add new year
-fl_within_FEC_limit$Year <- format(as.Date(fl_within_FEC_limit$contb_receipt_dt), "%y")
+Rich citites in Florida played major role contributing to candidates. We can see how rich, small cities liek Naples and Boca Raton have more impact than major cities such as Jacksonville.
 
 
-# check max and min contb_receipt_dt
-#min(fl_within_FEC_limit$contb_receipt_dt) 2013-10-01
-#max(fl_within_FEC_limit$contb_receipt_dt) 2016-12-31
-
+### Plot Two
+```{r plot contb_receipt_amt of 2016 - jitter}
+ggplot(aes(x = contb_receipt_dt, y = contb_receipt_amt), data = subset(fl_within_FEC_limit, 
+                                                           fl_within_FEC_limit$Year == '2016')) + 
+geom_point(alpha=0.3, position='jitter') +
+  geom_smooth()
 ```
+Contributin amounts started going up somewhere aroud Septmeber, reaching the peak in October and then started decreasing toward election month, Nov.
 
-```{r group contribution amount by Month_Yr}
-fl_within_FEC_limit.amt_by_Month_Yr <- fl_within_FEC_limit %>%
-  group_by(Year, Month) %>%
-  summarise(contb_receipt_amt_sum = sum(contb_receipt_amt),
-            contb_receipt_amt_mean = mean(contb_receipt_amt),
-            contb_receipt_amt_median = median(contb_receipt_amt),
-            n = n()) %>%
-  arrange(Year, Month)
 
-#head(fl_within_FEC_limit.amt_by_Month_Yr, 50)
-```
+
+
+### Plot Three
 ```{r }
-
-ggplot(aes(x = Year, y = contb_receipt_amt_mean,group = 1), data = fl_within_FEC_limit.amt_by_Month_Yr) + 
-   geom_li()
+ggplot(aes(x = contbr_occupation, y = contb_receipt_amt_sum),
+       data = group_by_multi)+
+  geom_bar(stat='identity', aes(fill = cand_nm)) +
+  xlab('Contributor Occupation') +
+  ylab('Contribution recieved amount in USD')
+  
 ```
 
 
-```{r }
 
-ggplot(aes(x = Month, y = contb_receipt_amt_mean,group = 1), data = subset(fl_within_FEC_limit.amt_by_Month_Yr, fl_within_FEC_limit.amt_by_Month_Yr$Year == "16") )+ 
-   geom_line()
-#subset(fl_within_FEC_limit.amt_by_Month_Yr, fl_within_FEC_limit.amt_by_Month_Yr$Year == "16")
-```
+## Final Plots and Summary
+
+
+
