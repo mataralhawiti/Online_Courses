@@ -154,6 +154,7 @@ count_by_city <- fl_within_FEC_limit %>%
   count() %>%
   arrange(desc(n)) %>%
   top_n(10)
+head(count_by_city)
 ```
 ```{r}
 ggplot(aes(x  = contbr_city, y= n), data = count_by_city) +
@@ -331,6 +332,7 @@ group_by_multi <- fl_within_FEC_limit %>%
   top_n(10)
 ```
 
+
 ```{r plot sum amt of top 10 occupations - for Donald Trump and Hillary Clinton}
 ggplot(aes(x = contbr_occupation, y = contb_receipt_amt_sum),
        data = group_by_multi)+
@@ -344,6 +346,7 @@ a heavy role contribtuting way much money to Hillary comapring to fractions Donl
 recieved from them.
 <br>
 <br>
+
 ```{r plot mean amt of top 10 occupations - for Donald Trump and Hillary Clinton}
 ggplot(aes(x = contbr_occupation, y = contb_receipt_amt_mean),
        data = group_by_multi)+
@@ -352,9 +355,41 @@ ggplot(aes(x = contbr_occupation, y = contb_receipt_amt_mean),
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 ```
+
 Trump has better average recived contribtuion amount than Hillary across all top 10 occupation
 except Attornys.
 Attronys donated about $400 on average to Hillary, and about $250 on average to Trump.
+
+
+```{r top 10 cities - Donald Trump and Hillary Clinton}
+group_by_city_can <- fl_within_FEC_limit %>%
+  group_by(cand_nm, contbr_city) %>%
+   filter(cand_nm %in% c("Trump, Donald J.", "Clinton, Hillary Rodham"),
+          contbr_city %in% count_by_city$contbr_city) %>%
+  summarise(contb_receipt_amt_sum  = sum(contb_receipt_amt),
+            contb_receipt_amt_mean = mean(contb_receipt_amt),
+            n = n()) %>%
+  arrange(desc(contb_receipt_amt_sum))  %>%
+  top_n(10)
+
+head(group_by_city_can)
+```
+
+<br>
+<br>
+
+Let's see how both nominees did in top 10 contributing cities : 
+
+```{r plot sum amt of top 10 cities -  Donald Trump and Hillary Clinton}
+ggplot(aes(x = contbr_city, y = contb_receipt_amt_sum),
+       data = group_by_city_can)+
+  geom_bar(stat='identity' , aes(fill = cand_nm)) +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+```
+Hillary led in Miami with about $22,000,000 M recicved contribtuion, 
+and Trump recvivced less than $5000,000 M. 
+However, Naples played in favor of Trump where he collected about $7000,000 .
 
 <br>
 <br>
@@ -433,10 +468,19 @@ Contributors from Miami, Tampa and Naples contributed the major portion of reciv
 
 On average, contribution amount was about $300 in 2014 which was best avergae contributon comparing to other years.
 
-Retireds, attorneys and homemakers were major players by contriuting most of the moeny recived. On average, homemakers donated about $460 and attoreys about $390 .
+Retireds, attorneys and homemakers were major players by contriuting most of the moeny recived. 
+On average, homemakers donated about 
+$460 and attoreys 
+about $390 .
 
 
 It'd be very interesting to look how condidates performed in other swing states. Further, explore contribution based on the candidate's party and his/her background.
+
+
+Dealing with US politics was a new experience for me. I had to read and understand how election contribution system works, what the limitations are, how candidates target supports, etc. 
+For example, I had to understand the limitations on allowed maximum contribution amount, and why I have negative numbers in the dataset and how to deal with them.
+
+
 
 
 
