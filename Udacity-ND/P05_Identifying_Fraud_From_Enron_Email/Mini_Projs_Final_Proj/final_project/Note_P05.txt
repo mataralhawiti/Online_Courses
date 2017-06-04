@@ -1,0 +1,118 @@
+https://stackoverflow.com/questions/12142133/how-to-get-first-element-in-a-list-of-tuples
+https://github.com/scikit-learn/scikit-learn/issues/3320
+https://medium.com/@aneesha/svm-parameter-tuning-in-scikit-learn-using-gridsearchcv-2413c02125a0
+http://optunity.readthedocs.io/en/latest/notebooks/notebooks/sklearn-automated-classification.html
+http://programtalk.com/python-examples/sklearn.metrics.precision_score/
+
+
+
+{'min_samples_split': 40, 'criterion': 'entropy', 'max_depth': None}
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=1,
+            min_samples_split=40, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=None, splitter='best')
+	Accuracy: 0.86047	Precision: 0.46764	Recall: 0.33600	F1: 0.39104	F2: 0.35605
+	Total predictions: 15000	True positives:  672	False positives:  765	False negatives: 1328	True negatives: 12235
+
+
+
+----------------
+criterion="entropy", max_depth=None, min_samples_split=65
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=1,
+            min_samples_split=65, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=None, splitter='best')
+	Accuracy: 0.85660	Precision: 0.44525	Recall: 0.30700	F1: 0.36342	F2: 0.32733
+	Total predictions: 15000	True positives:  614	False positives:  765	False negatives: 1386	True negatives: 12235
+
+	--------------
+
+
+	DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=1,
+            min_samples_split=40, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=None, splitter='best')
+	Accuracy: 0.84960	Precision: 0.41568	Recall: 0.31550	F1: 0.35873	F2: 0.33148
+	Total predictions: 15000	True positives:  631	False positives:  887	False negatives: 1369	True negatives: 12113
+---------------
+
+
+criterion="entropy", max_depth=2, min_samples_split=2, min_samples_leaf=2, max_leaf_nodes=None
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=2,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=2,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=None, splitter='best')
+	Accuracy: 0.84633	Precision: 0.40330	Recall: 0.31800	F1: 0.35561	F2: 0.33205
+	Total predictions: 15000	True positives:  636	False positives:  941	False negatives: 1364	True negatives: 12059
+
+
+/**********************************************************************************************/
+
+GaussianNB(priors=None)
+      Accuracy: 0.74167 Precision: 0.29436      Recall: 0.67100   F1: 0.40921 F2: 0.53428
+      Total predictions: 15000      True positives: 1342    False positives: 3217   False negatives:  658   True negatives: 9783
+
+*-*-*-*-*-*-
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=1,
+            min_samples_split=40, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=None, splitter='best')
+      Accuracy: 0.84953 Precision: 0.41540      Recall: 0.31550   F1: 0.35862 F2: 0.33144
+      Total predictions: 15000      True positives:  631    False positives:  888   False negatives: 1369   True negatives: 12112
+
+
+/**********************************************************************************************/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=1,
+            min_samples_split=50, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=None, splitter='best')
+      Accuracy: 0.85340 Precision: 0.43190      Recall: 0.31550   F1: 0.36463 F2: 0.33347
+      Total predictions: 15000      True positives:  631    False positives:  830   False negatives: 1369   True negatives: 12170
+
+
+
+
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=1,
+            min_samples_split=70, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=None, splitter='best')
+      Accuracy: 0.86053 Precision: 0.33212      Recall: 0.04550   F1: 0.08004 F2: 0.05499
+      Total predictions: 15000      True positives:   91    False positives:  183   False negatives: 1909   True negatives: 12817

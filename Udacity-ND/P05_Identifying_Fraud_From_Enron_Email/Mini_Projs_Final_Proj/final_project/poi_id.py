@@ -4,22 +4,31 @@ import sys
 import pickle
 sys.path.append("../tools/")
 import matplotlib.pyplot
-
-
-
 from feature_format import featureFormat, targetFeatureSplit
 from tester import dump_classifier_and_data
+from sklearn.feature_selection import SelectKBest
+from sklearn.cross_validation import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.svm import SVC
+from sklearn import tree
+from sklearn.metrics import accuracy_score, precision_score, recall_score
+from sklearn.grid_search import GridSearchCV
+
 
 ### Task 1: Select what features you'll use.
-### features_list is a list of strings, each of which is a feature name.
-### The first feature must be "poi".
+
+"""
+	features_list is a list of strings, each of which is a feature name.
+	The first feature must be "poi".
+"""
+
 features_list = ['poi','salary'] # You will need to use more features
 
-### Load the dictionary containing the dataset
+# Load the dictionary containing the dataset
 with open("final_project_dataset.pkl", "r") as data_file:
     data_dict = pickle.load(data_file)
 
-### Exploring our dataset (Matar):
+# Exploring our dataset (Matar):
 data_points = len(data_dict)
 features = len(data_dict[data_dict.keys()[0]]) # get first key from the returned list
 poi_lables = sum([ p["poi"] for p in data_dict.values() if p["poi"] == 1])
@@ -32,51 +41,57 @@ print "No. of POI : " , poi_lables
 
 
 ### Task 2: Remove outliers
-""" follwoing [outliers] mini-project,
-	Intutivly, If we have outliers I'd assume they will somewhere
-	around financial data.
+
+""" 
+	follwoing [outliers] mini-project,
+	Intutivly, If we have outliers I'd assume they will somewhere around financial data.
 	I find "salary" and "bounse" features most compeling for outliers,
 	so I'm going to plot them to see if we have outlier
 """
-# for point in data_dict.values():
-# 	matplotlib.pyplot.scatter( point['salary'], point['bonus'])
 
-# matplotlib.pyplot.xlabel("salary")
-# matplotlib.pyplot.ylabel("bonus")
-# matplotlib.pyplot.show()
+for point in data_dict.values():
+	matplotlib.pyplot.scatter( point['salary'], point['bonus'])
+
+matplotlib.pyplot.xlabel("salary")
+matplotlib.pyplot.ylabel("bonus")
+matplotlib.pyplot.show()
 
 
 """ let us find this outlier"""
-# max_bonus = max([ i["bonus"] for i in data_dict.values() if i["bonus"] != 'NaN'])
-# print max_bonus
+max_bonus = max([ i["bonus"] for i in data_dict.values() if i["bonus"] != 'NaN'])
 
-# for key, value in data_dict.items():
-# 	if data_dict[key]["bonus"] == max_bonus :
-# 		print key
-# 		break
+ 
+for key, value in data_dict.items():
+	if data_dict[key]["bonus"] == max_bonus :
+		outlier_key =  key
+		break
+
 
 """ remove the outlier, plot again"""
-data_dict.pop("TOTAL",0)
+data_dict.pop(outlier_key,0)
 
-# for point in data_dict.values():
-# 	matplotlib.pyplot.scatter( point['salary'], point['bonus'])
+for point in data_dict.values():
+	matplotlib.pyplot.scatter( point['salary'], point['bonus'])
 
-# matplotlib.pyplot.xlabel("salary")
-# matplotlib.pyplot.ylabel("bonus")
-# matplotlib.pyplot.show()
+matplotlib.pyplot.xlabel("salary")
+matplotlib.pyplot.ylabel("bonus")
+matplotlib.pyplot.show()
 
 
 
 
 
 ### Task 3: Create new feature(s)
-### Store to my_dataset for easy export below.
+
+# Store to my_dataset for easy export below.
 my_dataset = data_dict
 
 
-### Extract features and labels from dataset for local testing
+# Extract features and labels from dataset for local testing
 
-""" 1 : I'll create new feature which I'll call earned_cash (salary+bonus)"""
+""" 
+	1 : I'll create new feature which I'll call earned_cash (salary+bonus)
+"""
 
 for point in my_dataset:
 	p = my_dataset[point]
@@ -92,16 +107,19 @@ for point in my_dataset:
 
 
 
-""" Now, I'll prepare features_list that I will use """
+""" 
+	2 : Now, I'll prepare features_list that I will use 
+"""
 features_list = features_list + ['bonus',  'earned_cash', 'total_stock_value', 'expenses','long_term_incentive','director_fees', 
 									 'from_this_person_to_poi','shared_receipt_with_poi']
 
-print features_list
+
 data = featureFormat(my_dataset, features_list, sort_keys = True)
 labels, features = targetFeatureSplit(data)
 
-""" 2:  7 best features and prepare my final features list"""
-from sklearn.feature_selection import SelectKBest
+""" 
+	3 :  7 best features and prepare my final features list
+"""
 KBest_features = SelectKBest(k='all')
 KBest_features.fit(features, labels)
 
@@ -111,48 +129,48 @@ my_features_list = sorted(my_features_list, key=lambda x: x[1], reverse=True)[:7
 my_features_list = [ f[0] for f in my_features_list ]
 my_features_list = ['poi'] + my_features_list
 
-print my_features_list
 
-""" 3: extract my final features from the dataset"""
+""" 
+	4: extract my final features from the dataset
+"""
 data = featureFormat(my_dataset, my_features_list, sort_keys = True)
 labels, features = targetFeatureSplit(data)
 
 
-### Task 4: Try a varity of classifiers
-### Please name your classifier clf for easy export below.
-### Note that if you want to do PCA or other multi-stage operations,
-### you'll need to use Pipelines. For more info:
-### http://scikit-learn.org/stable/modules/pipeline.html
 
-# Provided to give you a starting point. Try a variety of classifiers.
+### Task 4: Try a varity of classifiers
+"""
+	Please name your classifier clf for easy export below.
+	Note that if you want to do PCA or other multi-stage operations,
+	you'll need to use Pipelines. For more info:
+	http://scikit-learn.org/stable/modules/pipeline.html
+
+	Provided to give you a starting point. Try a variety of classifiers.
+"""
+
 
 
 ### Task 5: Tune your classifier to achieve better than .3 precision and recall 
-### using our testing script. Check the tester.py script in the final project
-### folder for details on the evaluation method, especially the test_classifier
-### function. Because of the small size of the dataset, the script uses
-### stratified shuffle split cross validation. For more info: 
-### http://scikit-learn.org/stable/modules/generated/sklearn.cross_validation.StratifiedShuffleSplit.html
+"""
+	using our testing script. Check the tester.py script in the final project
+	folder for details on the evaluation method, especially the test_classifier
+	function. Because of the small size of the dataset, the script uses
+	stratified shuffle split cross validation. For more info: 
+	http://scikit-learn.org/stable/modules/generated/sklearn.cross_validation.StratifiedShuffleSplit.html
 
-# Example starting point. Try investigating other evaluation techniques!
+	Example starting point. Try investigating other evaluation techniques!
+"""
 
-from sklearn.cross_validation import train_test_split
+
+
 features_train, features_test, labels_train, labels_test = \
     train_test_split(features, labels, test_size=0.3, random_state=42)
 
 
-from sklearn.naive_bayes import GaussianNB
-from sklearn.svm import SVC
-from sklearn import tree
-
-from sklearn.metrics import accuracy_score, precision_score, recall_score
-from sklearn.grid_search import GridSearchCV
-from sklearn.metrics import classification_report
 
 
 
-
-##--------------------------------------------------------------------------------------------- NB
+#--------------------------------------------------------------------------------------------- NB
 """
 clf = GaussianNB()
 clf = clf.fit(features_train, labels_train)
@@ -163,31 +181,15 @@ recall 	  = recall_score(labels_test, pred)
 
 print precision
 print recall
-"""
-# 0.4
-# 0.666666666667
-
-
-
-##--------------------------------------------------------------------------------------------- SVM
-#clf = SVC(kernel='linear',cache_size=700) #kernel='linear'
-
-"""
-clf = SVC() #kernel='linear'
-clf = clf.fit(features_train, labels_train)
-pred = clf.predict(features_test)
-
-precision = precision_score(labels_test, pred)
-recall      = recall_score(labels_test, pred)
-
-print precision
-print recall
+ 0.84536082  0.15463918
 """
 
+
+
+
+#--------------------------------------------------------------------------------------------- SVM
 """
 param_grid = {'kernel':['linear'], 'C':[1, 10]}
-
-
 svr = SVC()
 clf = GridSearchCV(svr, param_grid)
 clf = clf.fit(features_train, labels_train)
@@ -201,91 +203,37 @@ print recall
 print clf.best_params_
 """
 
-##--------------------------------------------------------------------------------------------- DR
+
+#--------------------------------------------------------------------------------------------- DR
+
+#clf = tree.DecisionTreeClassifier(criterion="entropy", max_depth=None, min_samples_split=50)
+
 
 """
-clf = tree.DecisionTreeClassifier()
+param_grid = {'criterion': ["gini", "entropy"],
+ 			  'max_depth': [None, 2, 4, 6,8,10],
+ 			  'min_samples_split': [5, 10, 15,20,25,30,35,40,45,50]
+                }
 
+tr = tree.DecisionTreeClassifier()
+clf = GridSearchCV(tr, param_grid)
 clf = clf.fit(features_train, labels_train)
 
-pred = clf.predict(features_test)
 
-precision = precision_score(labels_test, pred)
-recall 	  = recall_score(labels_test, pred)
-
-print precision
-print recall
-
-0.666666666667
-0.666666666667
+print clf.best_params_
+#{'min_samples_split': 40, 'criterion': 'entropy', 'max_depth': None}
 """
 
-clf = tree.DecisionTreeClassifier(criterion="entropy", max_depth=None, min_samples_split=40)
 
-
-#
-#clf = tree.DecisionTreeClassifier(criterion="entropy", max_depth=2, min_samples_split=2, min_samples_leaf=2, max_leaf_nodes=None)
-#{'min_samples_split': 5, 'max_leaf_nodes': 20, 'criterion': 'gini', 'max_depth': 2, 'min_samples_leaf': 2}
-
-# param_grid = {'criterion': ["gini", "entropy"],
-# 			  'max_depth': [None, 2, 4, 6,8,10],
-# 			  'min_samples_split': [5, 10, 15,20,25,30,35,40,45,50]
-#                }
-
-# tr = tree.DecisionTreeClassifier()
-# clf = GridSearchCV(tr, param_grid)
-# clf = clf.fit(features_train, labels_train)
-
-# #pred = clf.predict(features_test)
-
-# #precision = precision_score(labels_test, pred)
-# #recall 	  = recall_score(labels_test, pred)
-
-# #print precision
-# #print recall
-# print clf.best_params_
-
-
-
-##--------------------------------------------------------------------------------------------- Generic fun
-
-# tuned_parameters = [ {'kernel': ['linear'], 'C': [1, 10]}]
-
-# scores = ['precision', 'recall']
-# for score in scores:
-#     print "# Tuning hyper-parameters for %s" % score
-#     print
-
-#     clf = GridSearchCV(SVC(C=1), tuned_parameters, cv=5,
-#                        scoring='%s_macro' % score)
-#     clf.fit(features_train, labels_train)
-
-#     print "Best parameters set found on development set:"
-#     print
-#     print clf.best_params_
-#     print 
-#     print "Grid scores on development set:"
-#     print 
-#     means = clf.cv_results_['mean_test_score']
-#     stds = clf.cv_results_['std_test_score']
-#     for mean, std, params in zip(means, stds, clf.cv_results_['params']):
-#         print "%0.3f (+/-%0.03f) for %r" % (mean, std * 2, params)
-#     print "Detailed classification report:"
-#     print 
-#     print "The model is trained on the full development set."
-#     print "The scores are computed on the full evaluation set."
-#     print 
-#     y_true, y_pred = labels_test, clf.predict(features_test)
-#     print classification_report(y_true, y_pred)
-#     print 
 
 
 
 
 ### Task 6: Dump your classifier, dataset, and features_list so anyone can
-### check your results. You do not need to change anything below, but make sure
-### that the version of poi_id.py that you submit can be run on its own and
-### generates the necessary .pkl files for validating your results.
-
+"""
+check your results. You do not need to change anything below, but make sure
+that the version of poi_id.py that you submit can be run on its own and
+generates the necessary .pkl files for validating your results.
+"""
 
 dump_classifier_and_data(clf, my_dataset, features_list)
