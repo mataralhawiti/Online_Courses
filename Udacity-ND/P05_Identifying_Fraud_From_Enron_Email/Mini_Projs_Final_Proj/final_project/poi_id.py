@@ -171,6 +171,8 @@ features_train, features_test, labels_train, labels_test = \
 
 
 #--------------------------------------------------------------------------------------------- NB
+clf = GaussianNB()
+
 """
 clf = GaussianNB()
 clf = clf.fit(features_train, labels_train)
@@ -185,28 +187,8 @@ print recall
 """
 
 
-
-
-#--------------------------------------------------------------------------------------------- SVM
-"""
-param_grid = {'kernel':['linear'], 'C':[1, 10]}
-svr = SVC()
-clf = GridSearchCV(svr, param_grid)
-clf = clf.fit(features_train, labels_train)
-pred = clf.predict(features_test)
-
-precision = precision_score(labels_test, pred)
-recall 	  = recall_score(labels_test, pred)
-
-print precision
-print recall
-print clf.best_params_
-"""
-
-
 #--------------------------------------------------------------------------------------------- DR
 
-#clf = tree.DecisionTreeClassifier(criterion="entropy", max_depth=None, min_samples_split=50)
 
 
 """
@@ -222,6 +204,9 @@ clf = clf.fit(features_train, labels_train)
 
 print clf.best_params_
 #{'min_samples_split': 40, 'criterion': 'entropy', 'max_depth': None}
+
+#clf = tree.DecisionTreeClassifier(criterion="entropy", max_depth=None, min_samples_split=50)
+
 """
 
 
