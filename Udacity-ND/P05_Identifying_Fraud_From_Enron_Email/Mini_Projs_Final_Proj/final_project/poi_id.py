@@ -90,29 +90,21 @@ my_dataset = data_dict
 # Extract features and labels from dataset for local testing
 
 """ 
-	1 : I'll create new feature which I'll call earned_cash (salary+bonus)
+	1 : I'll create new feature which I'll call salary_to_bonus (salary/bonus)
 """
-
 for point in my_dataset:
 	p = my_dataset[point]
-	if p['salary'] == 'NaN' and p['bonus'] == 'NaN' :
-		p['earned_cash'] = 'NaN'
-	elif p['salary'] != 'NaN' and p['bonus'] == 'NaN' :
-		p['earned_cash'] = p['salary']
-	elif p['salary'] == 'NaN' and p['bonus'] != 'NaN' :
-		p['earned_cash'] = p['bonus']
+	if p['salary'] != 'NaN' and p['bonus'] != 'NaN' :
+		p['salary_to_bonus'] = float(p['bonus']) / float(p['salary'])
 	else :
-		p['earned_cash'] = p['salary'] + p['bonus']
-
-
+		p['salary_to_bonus'] = 'NaN'
 
 
 """ 
 	2 : Now, I'll prepare features_list that I will use 
 """
-features_list = features_list + ['bonus',  'earned_cash', 'total_stock_value', 'expenses','long_term_incentive','director_fees', 
-									 'from_this_person_to_poi','shared_receipt_with_poi']
-
+features_list = features_list + ['bonus',  'salary_to_bonus', 'total_stock_value', 'expenses','exercised_stock_options','long_term_incentive',
+								'restricted_stock','director_fees', 'from_this_person_to_poi','shared_receipt_with_poi']
 
 data = featureFormat(my_dataset, features_list, sort_keys = True)
 labels, features = targetFeatureSplit(data)
@@ -183,13 +175,10 @@ recall 	  = recall_score(labels_test, pred)
 
 print precision
 print recall
- 0.84536082  0.15463918
 """
 
 
 #--------------------------------------------------------------------------------------------- DR
-
-
 
 """
 param_grid = {'criterion': ["gini", "entropy"],
@@ -203,9 +192,9 @@ clf = clf.fit(features_train, labels_train)
 
 
 print clf.best_params_
-#{'min_samples_split': 40, 'criterion': 'entropy', 'max_depth': None}
-
-#clf = tree.DecisionTreeClassifier(criterion="entropy", max_depth=None, min_samples_split=50)
+{'min_samples_split': 40, 'criterion': 'entropy', 'max_depth': None} #old
+{'min_samples_split': 35, 'criterion': 'entropy', 'max_depth': None} # new
+clf = tree.DecisionTreeClassifier(criterion="entropy", max_depth=None, min_samples_split=35)
 
 """
 
