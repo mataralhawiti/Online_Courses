@@ -32,11 +32,20 @@ with open("final_project_dataset.pkl", "r") as data_file:
 data_points = len(data_dict)
 features = len(data_dict[data_dict.keys()[0]]) # get first key from the returned list
 poi_lables = sum([ p["poi"] for p in data_dict.values() if p["poi"] == 1])
+missing_values = {}
+for item in data_dict.values():
+	for k, v in item.iteritems():
+		if item[k] == 'NaN' :
+			if missing_values.has_key(k) :
+				missing_values[k] = missing_values[k]+1
+			else :
+				missing_values[k] = 1
+
 
 print "No. of data points : ", data_points
 print "No. of features : ", features
 print "No. of POI : " , poi_lables
-
+print "Missing values : ", missing_values
 
 
 
