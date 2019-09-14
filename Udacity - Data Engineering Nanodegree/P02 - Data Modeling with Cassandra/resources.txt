@@ -1,0 +1,11 @@
+https://intellidzine.blogspot.com/2014/01/cassandra-data-modelling-primary-keys.html
+
+https://www.datastax.com/dev/blog/the-most-important-thing-to-know-in-cassandra-data-modeling-the-primary-key
+
+https://shermandigital.com/blog/designing-a-cassandra-data-model/
+
+https://www.red-gate.com/simple-talk/sql/nosql-databases/apache-cassandra-data-modeling-and-query-best-practices/
+
+https://learning.oreilly.com/library/view/cassandra-the-definitive/9781491933657/
+
+https://learning.oreilly.com/library/view/cassandra-the-definitive/9781491933657/ch04.html
