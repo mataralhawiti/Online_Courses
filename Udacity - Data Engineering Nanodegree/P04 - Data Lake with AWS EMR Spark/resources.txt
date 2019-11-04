@@ -1,0 +1,32 @@
+Best Practices for Building a Data Lake in Amazon S3 and Amazon Glacier
+https://www.slideshare.net/AmazonWebServices/best-practices-for-building-a-data-lake-in-amazon-s3-and-amazon-glacier-with-special-guests-airbnb-viber-stg312-reinvent-2017
+
+Data Lake Implementation: Processing and Querying Data in Place
+https://www.slideshare.net/AmazonWebServices/data-lake-implementation-processing-and-querying-data-in-place-stg204r1-aws-reinvent-2018
+
+Data Lakes and Analytics on AWS
+https://aws.amazon.com/big-data/datalakes-and-analytics/
+
+Building Big Data Storage Solutions (Data Lakes) for Maximum Flexibility
+https://docs.aws.amazon.com/whitepapers/latest/building-data-lakes/building-data-lake-aws.html
+
+The Business And Technological Benefits Of Data Lakes
+https://www.smartdatacollective.com/business-and-technological-benefits-of-data-lakes/
+
+Build a data lake on Google Cloud Platform (GCP)
+https://cloud.google.com/solutions/build-a-data-lake-on-gcp
+
+
+
+What is the difference between partitionBy and repartition methods in Spark?
+http://tantusdata.com/spark-shuffle-case-1-partition-by-and-repartition/
+
+How to read and write Parquet files in Spark
+https://sparkbyexamples.com/spark/spark-read-write-dataframe-parquet-example/
+
+A nice discussion about Writing data to Parquet with partitions
+https://issues.apache.org/jira/browse/SPARK-20049
+
+stackoverflow: How to save a partitioned parquet file in Spark 2.1
+https://stackoverflow.com/questions/43731679/how-to-save-a-partitioned-parquet-file-in-spark-2-1
+

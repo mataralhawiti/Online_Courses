@@ -1,0 +1,5 @@
+emr-5.27.0
+Spark: Spark 2.4.4 on Hadoop 2.8.5 YARN with Ganglia 3.7.2 and Zeppelin 0.8.1
+
+EC2 instance profile:EMR_EC2_DefaultRole
+EMR role:EMR_DefaultRole
