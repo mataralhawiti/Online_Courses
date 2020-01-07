@@ -8,25 +8,25 @@ from helpers.data_lake_etl import create_spark_session, process_immigration, pro
                               process_airports, process_us_demographic, copy_to_s3, list_objs_s3
 
 # S3 buckets
-s3_bucket_in = "s3a://dend-capstone-raw/"
-s3_bucket_out = "s3a://dend-capstone/"
+S3_BUCKET_IN = "s3a://dend-capstone-raw/"
+S3_BUCKET_OUT = "s3a://dend-capstone/"
 
 # data files
-immigration_file = "immigration/*.parquet"
-temperature_file = "GlobalLandTemperaturesByState.csv"
-airports_file = "airport-codes_csv.csv"
-us_demographic_file = "us-cities-demographics.csv"
+IMMIGRATION_FILE = "immigration/*.parquet"
+TEMPERATURE_FILE = "GlobalLandTemperaturesByState.csv"
+AIRPORTS_FILE = "airport-codes_csv.csv"
+US_DEMOGRAPHIC_FILE = "us-cities-demographics.csv"
 
 
-lookup_files = ['I94addr.json', 'airlines_iata_codes.json', 'I94port.json', 'I94res.json']
-files_mapping = {'I94addr.json' : 'us_states/us_states.json', 
+LOOKUP_FILES = ['I94addr.json', 'airlines_iata_codes.json', 'I94port.json', 'I94res.json']
+FILES_MAPPING = {'I94addr.json' : 'us_states/us_states.json', 
                  'airlines_iata_codes.json' : 'airlines_iata/airlines_iata.json',
                  'I94port.json' : 'us_ports/us_ports.json',
                  'I94res.json' : 'countries/countries.json'
                 }
 
 # set dags default args
-default_args = {
+DEFAULT_ARGS = {
     'owner': 'Matar',
     'start_date': datetime.utcnow() ,
     'depends_on_past': False,
@@ -37,7 +37,7 @@ default_args = {
 
 # our main dag
 dag = DAG('data_lake_dag',
-          default_args=default_args,
+          default_args=DEFAULT_ARGS,
           description='Load from S3, and transform data using Spark, then write data out to S3 with Airflow',
           schedule_interval='@monthly'
         )
@@ -51,35 +51,35 @@ start_operator = DummyOperator(
 process_immigration = PythonOperator(
     task_id='process_immigration',
     python_callable=process_immigration,
-    op_kwargs={'input_data':s3_bucket_in, 'data_file':immigration_file, 'output_data':s3_bucket_out},
+    op_kwargs={'input_data':S3_BUCKET_IN, 'data_file':IMMIGRATION_FILE, 'output_data':S3_BUCKET_OUT},
     dag=dag
 )
 
 process_temperature = PythonOperator(
     task_id='process_temperature',
     python_callable=process_temperature,
-    op_kwargs={'input_data':s3_bucket_in, 'data_file':temperature_file, 'output_data':s3_bucket_out},
+    op_kwargs={'input_data':S3_BUCKET_IN, 'data_file':TEMPERATURE_FILE, 'output_data':S3_BUCKET_OUT},
     dag=dag
 )
 
 process_airports = PythonOperator(
     task_id='process_airports',
     python_callable=process_airports,
-    op_kwargs={'input_data':s3_bucket_in, 'data_file':airports_file, 'output_data':s3_bucket_out},
+    op_kwargs={'input_data':S3_BUCKET_IN, 'data_file':AIRPORTS_FILE, 'output_data':S3_BUCKET_OUT},
     dag=dag
 )
 
 process_us_demographic = PythonOperator(
     task_id='process_us_demographic',
     python_callable=process_us_demographic,
-    op_kwargs={'input_data':s3_bucket_in, 'data_file':us_demographic_file, 'output_data':s3_bucket_out},
+    op_kwargs={'input_data':S3_BUCKET_IN, 'data_file':US_DEMOGRAPHIC_FILE, 'output_data':S3_BUCKET_OUT},
     dag=dag
 )
 
 copy_to_s3 = PythonOperator(
     task_id='copy_to_s3',
     python_callable=copy_to_s3,
-    op_kwargs={'lookup_files':lookup_files, 'files_mapping':files_mapping},
+    op_kwargs={'lookup_files':LOOKUP_FILES, 'files_mapping':FILES_MAPPING},
     dag=dag
 )
 
