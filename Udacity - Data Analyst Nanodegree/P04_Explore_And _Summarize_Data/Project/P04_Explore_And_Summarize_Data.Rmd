@@ -1,0 +1,488 @@
+---
+title: "P04_Explore_And_Summarize_Data"
+author: "2016 Presidential Campaign Financial Contributions - All Candidates"
+output: html_document
+---
+```{r setwd()}
+```
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=12, fig.height=8, fig.path='Figs/',
+                      echo=FALSE, warning=FALSE, message=FALSE)
+```
+
+```{r setup}
+library(ggplot2)
+library(gridExtra) 
+library(dplyr)
+library(reshape2)
+```
+
+
+```{r Load the data}
+fl = read.csv('P00000001-FL.csv', row.names = NULL)
+colnames(fl) <- c(colnames(fl)[-1], "x")
+fl$x <- NULL
+```
+
+## Dataset Overview
+```{r}
+dim(fl)
+```
+
+```{r column names}
+names(fl)
+```
+
+```{r Contributions}
+summary(fl)
+```
+
+Our dataset consists of 18 variables, with almost 426,057 observations.
+
+
+Let us see some sample data
+```{r 2 samples}
+head(fl, 2)
+```
+
+
+
+According [FEC.gov](http://www.fec.gov/info/contriblimitschart1718.pdfm)  :
+Individual's contribution limit is $2700 so I'll eliminate any negative amounts 
+(refunds) and amounts that exceed the contribution's limit .
+
+```{r clean data by filtering contb_receipt_amt btween 1 and 2700}
+fl_above_zero <- filter(fl, fl$contb_receipt_amt > 0)
+fl_within_FEC_limit <- filter(fl_above_zero, 
+                              fl_above_zero$contb_receipt_amt <= 2700)
+
+dim(fl_within_FEC_limit)
+
+head(fl_within_FEC_limit)
+
+```
+
+
+## Univariate Plots Section
+### Exploring recieved contribution amount 
+```{r}
+summary(fl_within_FEC_limit$contb_receipt_amt)
+```
+```{r}
+ ggplot(aes(x = contb_receipt_amt), data = fl_within_FEC_limit) + 
+   geom_histogram(fill = '#000000')
+```
+
+
+```{r}
+ ggplot(aes(x = contb_receipt_amt), data = fl_within_FEC_limit) + 
+   geom_histogram (fill = '#000000')+
+  scale_x_continuous(limits = c(0, 2700), breaks = seq(0, 2700, 100))
+
+```
+
+
+ From above, We can see about 120,000 contributor donated about less $145 . 
+ <br>
+ <br>
+
+
+```{r contb count for each cand_nm}
+ ggplot(aes(x = cand_nm), data = fl_within_FEC_limit) + 
+   geom_histogram (stat="count", fill = '#000000') +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+```
+
+Hillary clinton recieved highest contribution number with almost 190,000 contribution.
+Bernie sanders roughly reciedved 80,000 contribution, followed 
+closely by Donland Trump with about 76,000 contribution.
+ <br>
+ <br>
+
+Let's see how much in total each of candidates recieved overall :
+
+```{r total contb amt for each candidates - histogram }
+ggplot(aes(x  = cand_nm, y = contb_receipt_amt), data = fl_within_FEC_limit) +
+  geom_bar( stat="summary", fun.y=sum, fill = '#000000') +
+    ylab('total_contb_receipt_amt') +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+```
+Hillary Clinton earned the lion's share of recieved contribution amount among 
+other candidates by recieving almost $22,500,000 M.
+What surprised me here is that Jeb Bush who had few thousands contrintuons got way 
+a lot of money comparing to other candidates who had better contribtuiobns numbers 
+such as Bernie sanders and Marco Rubio.
+ <br>
+ <br>
+
+Boxplot would give us a better visulization about how recived contribtuion amount distributed across candidates : 
+```{r total contb amt for each candidates - boxplot}
+ggplot(aes(x  = cand_nm, y = contb_receipt_amt), data = fl_within_FEC_limit) +
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+We have a lot of outliers, Our boxplo needs some tweaks to make it more readable :
+```{r contributions distrbution for candidates }
+ggplot(aes(x  = cand_nm, y = contb_receipt_amt), data = fl_within_FEC_limit) +
+  scale_y_log10() +
+  geom_boxplot(alpha = 0.2, color = 'Black') +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+ <br>
+ <br>
+
+Let's the average contribution amount for each candidates :
+```{r mean contb amt for each candidates - histogram }
+ggplot(aes(x  = cand_nm, y = contb_receipt_amt), data = fl_within_FEC_limit) +
+  geom_bar( stat="summary", fun.y=mean, fill = '#000000') +
+  ylab('contb_receipt_amt_mean') +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+```
+ <br>
+ <br>
+ <br>
+ <br>
+
+### Now, I'm going to explore top 10 cities with most contribution number/amount :
+```{r 10 top cities by contribution count}
+count_by_city <- fl_within_FEC_limit %>%
+  group_by(contbr_city) %>%
+  count() %>%
+  arrange(desc(n)) %>%
+  top_n(10)
+head(count_by_city)
+```
+```{r}
+ggplot(aes(x  = contbr_city, y= n), data = count_by_city) +
+  geom_col(fill = '#000000')
+```
+
+Looking at our barchart, I was surprised that Jacksonville wasn't the city with 
+highest contribution number since it's the largest city in Florida.
+Seeing Miami, Tampa and Orlando among the top 5 made a lot of sense. 
+However, I was a bit shocked that Naples slightly surpassed Jacksonville. 
+One justification I could think of is that Naples is considered of the richest 
+cities in Florida state. 
+ <br>
+ <br>
+ <br>
+
+```{r 10 top cities by sum contribution amount}
+sum_by_city <- fl_within_FEC_limit %>%
+  group_by(contbr_city) %>%
+  summarise(sum  = sum(contb_receipt_amt), 
+            n = n()) %>%
+  arrange(desc(sum)) %>%
+  top_n(10)
+```
+
+
+
+```{r}
+ggplot(aes(x  = contbr_city, y= sum), data = sum_by_city) +
+  geom_col(fill = '#000000') 
+```
+Interestingly, two small cities Naples and Boca Raton had significant 
+contribution comparing to other large cities such as Orlando and Jacksonville. 
+
+<br>
+<br>
+
+
+## Bivariate Plots Section
+
+### Exploring contribtuin amount and contributin date :
+
+Let's see how contribution is distrubted across years
+```{r convert contb_receipt_dt to date }
+fl_within_FEC_limit$contb_receipt_dt <- as.Date(fl_within_FEC_limit$contb_receipt_dt, 
+                                                "%d-%b-%y")
+```
+
+```{r add new column : year}
+fl_within_FEC_limit$Year <- format(as.Date(fl_within_FEC_limit$contb_receipt_dt), 
+                                   "%Y")
+```
+
+```{r let us plot group by year}
+ggplot(aes(x = Year, y = contb_receipt_amt), data = fl_within_FEC_limit) + 
+   geom_boxplot()
+```
+
+I expected 2016 to have highest contribution amount mean comparing to other years, 
+since it's the election year and presidential race gets closer as we approach 
+nominees announcement date. However, data proved me wrong as I clearly see 2014 
+has the highest contribtuon amount mean .
+ <br>
+ <br>
+
+Let me explore election year (2016) further :
+```{r plot contb_receipt_amt of 2016}
+ggplot(aes(x = contb_receipt_dt, y = contb_receipt_amt), 
+       data = subset(fl_within_FEC_limit, 
+                     fl_within_FEC_limit$Year == '2016')) + 
+   geom_point( alpha=0.2,fill = '#000000') +
+    geom_smooth()
+
+```
+
+
+
+
+```{r add new column : Month_year}
+fl_within_FEC_limit$Month_year <- format(as.Date(fl_within_FEC_limit$contb_receipt_dt), 
+                                         "%b %Y")
+```
+
+```{r group contribution amount by Month_year}
+fl_within_FEC_limit.amt_by_Month_year <- subset(fl_within_FEC_limit, 
+                                                fl_within_FEC_limit$Year 
+                                                == '2016') %>%
+  group_by(Month_year) %>%
+  summarise(contb_receipt_amt_sum = sum(contb_receipt_amt),
+            contb_receipt_amt_mean = mean(contb_receipt_amt),
+            contb_receipt_amt_median = median(contb_receipt_amt),
+            n = n()) %>%
+  arrange(Month_year)
+
+```
+
+
+ <br>
+ <br>
+ Let's see monthly sum/mean/median of contribution amount for 2016 :
+```{r plot Month_year for 2016}
+p1 <- ggplot(aes(x = Month_year, y = contb_receipt_amt_sum, group = 1), 
+             data = fl_within_FEC_limit.amt_by_Month_year) + 
+  geom_line()
+
+p2 <- ggplot(aes(x = Month_year, y = contb_receipt_amt_mean, group = 1), 
+             data = fl_within_FEC_limit.amt_by_Month_year) + 
+   geom_line()
+
+p3 <- ggplot(aes(x = Month_year, y = contb_receipt_amt_median, group = 1), 
+             data = fl_within_FEC_limit.amt_by_Month_year) + 
+   geom_line()
+
+grid.arrange(p1, p2, p3, ncol=1)
+
+```
+
+<br>
+<br>
+<br>
+
+### Exploring contribtuin amount and contbr_occupation :
+
+```{r}
+sum_amt_by_occupation <- fl_within_FEC_limit %>%
+  filter(contbr_occupation != 'INFORMATION REQUESTED',
+         contbr_occupation != 'INFORMATION REQUESTED PER BEST EFFORTS') %>%
+  group_by(contbr_occupation) %>%
+  summarise(contb_receipt_amt_sum  = sum(contb_receipt_amt),
+            contb_receipt_amt_mean = mean(contb_receipt_amt),
+            n = n()) %>%
+  arrange(desc(contb_receipt_amt_sum)) %>%
+  top_n(10)
+```
+
+```{r plot total amt by occupation using bar chart}
+ggplot(aes(x=contbr_occupation, y=contb_receipt_amt_sum), 
+       data=sum_amt_by_occupation) +
+    geom_bar(stat='identity', fill = '#000000')  
+```
+
+Retireds poured a lot of moeny into the elections, marking themselves as the 
+biggest contributors among differebt occuptaions. Way behind, comes attorneys 
+and then homemakers in the third place.
+
+<br>
+<br>
+
+Let us what was the mean contribtuions among those top occupations :
+```{r plot mean amt by occupation using bar chart}
+ggplot(aes(x=contbr_occupation, y=contb_receipt_amt_mean), 
+       data=sum_amt_by_occupation) +
+    geom_bar(stat='identity', fill = '#000000')  
+```
+
+Homemakers were the dark horse here by contributing about $460 on avrage. 
+Attorneys followed with average contribution less than $400
+
+
+<br>
+<br>
+
+## Multivariate Plots Section
+Let's look into top 10 occupations and thier impact on two final nominees, Donald Trump and Hillary Clinton
+
+```{r top 10 occupations - for Donald Trump and Hillary Clinton}
+group_by_multi <- fl_within_FEC_limit %>%
+  group_by(cand_nm, contbr_occupation ) %>%
+   filter(cand_nm %in% c("Trump, Donald J.", "Clinton, Hillary Rodham"),
+          contbr_occupation %in% sum_amt_by_occupation$contbr_occupation) %>%
+  summarise(contb_receipt_amt_sum  = sum(contb_receipt_amt),
+            contb_receipt_amt_mean = mean(contb_receipt_amt),
+            n = n()) %>%
+  arrange(desc(contb_receipt_amt_sum))  %>%
+  top_n(10)
+```
+
+
+```{r plot sum amt of top 10 occupations - for Donald Trump and Hillary Clinton}
+ggplot(aes(x = contbr_occupation, y = contb_receipt_amt_sum),
+       data = group_by_multi)+
+  geom_bar(stat='identity',position = 'dodge', aes(fill = cand_nm)) +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+```
+
+Retireds were the most highest contributor to both nominees. Attorneys played 
+a heavy role contribtuting way much money to Hillary comapring to fractions Donlad 
+recieved from them.
+<br>
+<br>
+
+```{r plot mean amt of top 10 occupations - for Donald Trump and Hillary Clinton}
+ggplot(aes(x = contbr_occupation, y = contb_receipt_amt_mean),
+       data = group_by_multi)+
+  geom_line(aes(color = cand_nm, group = cand_nm)) +
+  #geom_bar(stat='identity',position = 'dodge', aes(fill = cand_nm))+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+```
+
+Trump has better average recived contribtuion amount than Hillary across all top 10 occupation
+except Attornys.
+Attronys donated about $400 on average to Hillary, and about $250 on average to Trump.
+
+
+```{r top 10 cities - Donald Trump and Hillary Clinton}
+group_by_city_can <- fl_within_FEC_limit %>%
+  group_by(cand_nm, contbr_city) %>%
+   filter(cand_nm %in% c("Trump, Donald J.", "Clinton, Hillary Rodham"),
+          contbr_city %in% count_by_city$contbr_city) %>%
+  summarise(contb_receipt_amt_sum  = sum(contb_receipt_amt),
+            contb_receipt_amt_mean = mean(contb_receipt_amt),
+            n = n()) %>%
+  arrange(desc(contb_receipt_amt_sum))  %>%
+  top_n(10)
+
+head(group_by_city_can)
+```
+
+<br>
+<br>
+
+Let's see how both nominees did in top 10 contributing cities : 
+
+```{r plot sum amt of top 10 cities -  Donald Trump and Hillary Clinton}
+ggplot(aes(x = contbr_city, y = contb_receipt_amt_sum),
+       data = group_by_city_can)+
+  geom_bar(stat='identity' , aes(fill = cand_nm)) +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+```
+Hillary led in Miami with about $22,000,000 M recicved contribtuion, 
+and Trump recvivced less than $5000,000 M. 
+However, Naples played in favor of Trump where he collected about $7000,000 .
+
+<br>
+<br>
+<br>
+<br>
+
+## Final Plots and Summary
+
+### Plot One
+
+```{r}
+ggplot(aes(x  = contbr_city, y= sum), data = sum_by_city) +
+  geom_col(fill = '#099DD9') +
+  scale_y_continuous(breaks = seq(0, 5000000, 500000)) +
+  xlab('City of contribution') +
+  ylab('Total contribution amount in USD')
+```
+Rich citites in Florida played major role contributing to candidates. 
+We can see how rich, small cities liek Naples and Boca Raton have more i
+mpact than major cities such as Jacksonville.
+
+<br>
+<br>
+
+### Plot Two
+
+```{r plot contb_receipt_amt of 2016 - jitter}
+ggplot(aes(x = contb_receipt_dt, y = contb_receipt_amt), 
+       data = subset(fl_within_FEC_limit, 
+                     fl_within_FEC_limit$Year == '2016')) + 
+  scale_y_log10() +
+geom_point(alpha=0.3, position='jitter') +
+  geom_smooth()
+```
+Contributin amounts started going up somewhere aroud Septmeber, 
+reaching the peak in October and then started decreasing toward election month, Nov.
+
+<br>
+<br>
+
+### Plot Three
+
+```{r }
+ggplot(aes(x = contbr_occupation, y = contb_receipt_amt_sum),
+       data = group_by_multi)+
+  geom_bar(stat='identity', position = 'dodge', aes(fill = cand_nm)) +
+  scale_fill_manual(values=c("Blue","red")) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  xlab('Occupations') +
+  ylab('Contribution recieved amount in USD')+
+  labs(fill="Candidate name")
+  
+```
+Hillary topped Trump in all top 10 occuptins.
+
+<br>
+<br>
+<br>
+<br>
+
+## Reflection
+
+
+Florida state 2016 election contribution dataset contains more than 417573 items 
+which were captured between 2013-10-01 and 2016-12-31. 
+To begin, I omitted contribution above FEC limit which is $2700, and any refunes.
+
+The average contribuion was around $145, and the minimum recieved contribution was $0.15.
+
+
+Most of the contribution was made to hillary clinton, 
+bernie sanders and Donland Trump respectivly.
+
+Contributors from Miami, Tampa and Naples contributed the major portion of recived money.
+
+
+On average, contribution amount was about $300 in 2014 which was best avergae contributon comparing to other years.
+
+Retireds, attorneys and homemakers were major players by contriuting most of the moeny recived. 
+On average, homemakers donated about 
+$460 and attoreys 
+about $390 .
+
+
+It'd be very interesting to look how condidates performed in other swing states. Further, explore contribution based on the candidate's party and his/her background.
+
+
+Dealing with US politics was a new experience for me. I had to read and understand how election contribution system works, what the limitations are, how candidates target supports, etc. 
+For example, I had to understand the limitations on allowed maximum contribution amount, and why I have negative numbers in the dataset and how to deal with them.
+
+
+
+
+
+
+
