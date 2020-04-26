@@ -1,0 +1,154 @@
+bin/zookeeper-server-start.sh config/zookeeper.properties
+
+
+
+
+bin/zookeeper-server-start etc/kafka/zookeeper.properties
+
+bin/kafka-server-start etc/kafka/server.properties
+
+
+
+
+
+bin/kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic sampleTopic
+
+bin/kafka-console-producer --broker-list localhost:9092 --topic sampleTopic
+
+bin/kafka-console-consumer --bootstrap-server localhost:9092 --topic sampleTopic --from-beginning
+
+--
+
+
+bin/schema-registry-start etc/schema-registry/schema-registry.properties
+
+
+bin/connect-standalone etc/kafka/connect-standalone.properties
+
+--
+
+# Start ZooKeeper.  Run this command in its own terminal.
+$ ./bin/zookeeper-server-start ./etc/kafka/zookeeper.properties
+# Start Kafka.  Run this command in its own terminal.
+$ ./bin/kafka-server-start ./etc/kafka/server.properties
+# Start Schema Registry. Run this command in its own terminal.
+$ ./bin/schema-registry-start ./etc/schema-registry/schema-registry.properties
+# Start Connect in distributed mode. Run this command in its own terminal.
+$ ./bin/connect-distributed ./etc/schema-registry/connect-avro-distributed.properties
+
+
+
+------- Kafka Connect ----------------
+
+./bin/connect-standalone ./etc/schema-registry/connect-avro-standalone.properties ./etc/kafka-connect-jdbc/source-quickstart-sqlite.properties
+
+curl http://localhost:8083/connector-plugins | python -m json.tool
+
+curl http://localhost:8083/connectors | python -m json.tool
+
+curl http://localhost:8083/connectors/test-source-sqlite-jdbc-autoincrement | python -m json.tool
+
+
+
+
+
+
+*** The Kafka Connect API ***
+
+
+* Create a Connector
+
+curl -X POST -H 'Content-Type: application/json' -d '{
+    "name": "first-connector",
+    "config": {
+        "connector.class": "FileStreamSource",
+        "tasks.max": 1,
+        "file": "/var/log/journal/confluent-kafka-connect.service.log",
+        "topic": "kafka-connect-logs"
+    }
+  }' \
+  http://localhost:8083/connectors
+
+
+
+* List connectors
+curl http://localhost:8083/connectors | python -m json.tool
+
+
+* Detailing connectors
+curl http://localhost:8083/connectors/first-connector | python -m json.tool
+
+**
+curl http://localhost:8083/connectors/exercise2/status | python -m json.tool
+
+
+
+* Pausing connectors
+curl -X PUT http://localhost:8083/connectors/first-connector/pause
+
+* To restart
+curl -X POST http://localhost:8083/connectors/first-connector/restart
+
+* Deleting connectors
+curl -X DELETE http://localhost:8083/connectors/first-connector
+
+
+
+------------------
+
+
+./bin/kafka-rest-start etc/kafka-rest/kafka-rest.properties
+
+
+
+./bin/ksql-server-start ./etc/ksql/ksql-server.properties
+
+
+./bin/kafka-topics --list --bootstrap-server localhost:9092
+
+
+
+CREATE TABLE turnstile01 (
+    username VARCHAR,
+    currency VARCHAR,
+    amount int
+) WITH (
+    KAFKA_TOPIC='com.udacity.streams.ksql8',
+    VALUE_FORMAT='json',
+    KEY='amount'
+);
+
+CREATE TABLE turnstile_summary
+WITH (VALUE_FORMAT='json') AS
+    SELECT amount, COUNT(*) AS turnstilescount
+    FROM turnstile01 
+    GROUP BY amount EMIT CHANGES;
+
+select * from turnstile_summary EMIT CHANGES limit 5;
+
+-------------
+
+CREATE TABLE turnstilecurrency (
+    username VARCHAR,
+    currency VARCHAR,
+    amount int
+) WITH (
+    KAFKA_TOPIC='com.udacity.streams.ksql8',
+    VALUE_FORMAT='json',
+    KEY='currency'
+);
+
+CREATE TABLE turnstilecurrency_summary_01
+WITH (VALUE_FORMAT='json') AS
+    SELECT currency, COUNT(*) AS turnstilescount
+    FROM turnstilecurrency 
+    GROUP BY currency EMIT CHANGES;
+
+select * from turnstilecurrency_summary_01 EMIT CHANGES limit 5;
+
+
+select max(turnstilescount), currency from turnstilecurrency_summary_01 GROUP BY currency EMIT CHANGES;
+
+select count(currency), currency from turnstilecurrency GROUP BY currency EMIT CHANGES;
+
+turnstilecurrency

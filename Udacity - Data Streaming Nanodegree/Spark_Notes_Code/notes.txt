@@ -1,0 +1,36 @@
+# start a standalone master server by executing
+./sbin/start-master.sh
+
+
+# sttart one or more workers and connect them to the master via
+"""
+Once started, the master will print out a spark://HOST:PORT URL for itself, which you can use to connect workers to it,
+ or pass as the “master” argument to SparkContext. 
+ You can also find this URL on the master’s web UI, which is http://localhost:8080 by default.
+"""
+
+./sbin/start-slave.sh <master-spark-URL>
+./sbin/start-slave.sh spark://LAPTOP-5O0N6VCB.localdomain:7077
+
+============
+
+https://www.continualintegration.com/miscellaneous-articles/all/how-do-you-troubleshoot-usr-bin-env-python-no-such-file-or-directory/
+
+/usr/bin/python -> should invoke python terminal !!
+
+----
+
+ /usr/bin/python3.8 topic-1.py
+
+ulimit -Sn 10000
+
+
+##### run pysprak app to read from Kafak
+
+./bin/spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.4.5 /mnt/c/Users/user/udacity_spark/kafka_spark.py
+
+- Note :
+    What we’re actually doing here is including an external package to allow us 
+    to use Kafka (broker version 0.10), 
+    and the correct version of Spark we have installed (compiled with Scala 2.12 and Spark version 2.3.4). 
+    org.apache.spark:spark-sql-kafka-0-10_<scala_version>:<spark_version>.

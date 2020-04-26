@@ -1,0 +1,231 @@
+20/04/22 20:58:38 WARN Utils: Your hostname, LAPTOP-5O0N6VCB resolves to a loopback address: 127.0.1.1; using 172.17.177.241 instead (on interface eth1)
+20/04/22 20:58:38 WARN Utils: Set SPARK_LOCAL_IP if you need to bind to another address
+20/04/22 20:58:39 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Using Spark's default log4j profile: org/apache/spark/log4j-defaults.properties
+20/04/22 20:58:39 INFO SparkContext: Running Spark version 2.4.5
+20/04/22 20:58:39 INFO SparkContext: Submitted application: SparkStreaming Consloe
+20/04/22 20:58:40 INFO SecurityManager: Changing view acls to: matar86
+20/04/22 20:58:40 INFO SecurityManager: Changing modify acls to: matar86
+20/04/22 20:58:40 INFO SecurityManager: Changing view acls groups to:
+20/04/22 20:58:40 INFO SecurityManager: Changing modify acls groups to:
+20/04/22 20:58:40 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users  with view permissions: Set(matar86); groups with view permissions: Set(); users  with modify permissions: Set(matar86); groups with modify permissions: Set()
+20/04/22 20:58:40 INFO Utils: Successfully started service 'sparkDriver' on port 54619.
+20/04/22 20:58:40 INFO SparkEnv: Registering MapOutputTracker
+20/04/22 20:58:40 INFO SparkEnv: Registering BlockManagerMaster
+20/04/22 20:58:40 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+20/04/22 20:58:40 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+20/04/22 20:58:40 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-bf0f5eba-0a73-43f2-aaee-6d614803767f
+20/04/22 20:58:40 INFO MemoryStore: MemoryStore started with capacity 366.3 MB
+20/04/22 20:58:40 INFO SparkEnv: Registering OutputCommitCoordinator
+20/04/22 20:58:40 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+20/04/22 20:58:40 INFO SparkUI: Bound SparkUI to 0.0.0.0, and started at http://172.17.177.241:4040
+20/04/22 20:58:41 INFO Executor: Starting executor ID driver on host localhost
+20/04/22 20:58:41 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 54620.
+20/04/22 20:58:41 INFO NettyBlockTransferService: Server created on 172.17.177.241:54620
+20/04/22 20:58:41 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+20/04/22 20:58:41 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, 172.17.177.241, 54620, None)
+20/04/22 20:58:41 INFO BlockManagerMasterEndpoint: Registering block manager 172.17.177.241:54620 with 366.3 MB RAM, BlockManagerId(driver, 172.17.177.241, 54620, None)
+20/04/22 20:58:41 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, 172.17.177.241, 54620, None)
+20/04/22 20:58:41 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, 172.17.177.241, 54620, None)
+20/04/22 20:58:41 INFO SharedState: Setting hive.metastore.warehouse.dir ('null') to the value of spark.sql.warehouse.dir ('file:/mnt/c/Users/user/spark-2.4.5-bin-hadoop2.7/spark-warehouse').
+20/04/22 20:58:41 INFO SharedState: Warehouse path is 'file:/mnt/c/Users/user/spark-2.4.5-bin-hadoop2.7/spark-warehouse'.
+20/04/22 20:58:42 INFO StateStoreCoordinatorRef: Registered StateStoreCoordinator endpoint
+20/04/22 20:58:43 INFO InMemoryFileIndex: It took 67 ms to list leaf files for 1 paths.
+20/04/22 20:58:45 INFO CheckpointFileManager: Writing atomically to file:/tmp/temporary-bf05f957-5a6b-4f46-8b45-c49c78e73bbb/metadata using temp file file:/tmp/tempo
+rary-bf05f957-5a6b-4f46-8b45-c49c78e73bbb/.metadata.cf15aeab-f41c-461e-b69b-2578569c3be7.tmp
+20/04/22 20:58:45 INFO CheckpointFileManager: Renamed temp file file:/tmp/temporary-bf05f957-5a6b-4f46-8b45-c49c78e73bbb/.metadata.cf15aeab-f41c-461e-b69b-2578569c3b
+e7.tmp to file:/tmp/temporary-bf05f957-5a6b-4f46-8b45-c49c78e73bbb/metadata
+20/04/22 20:58:45 INFO MicroBatchExecution: Starting [id = 322b7a41-4aa8-44da-bdda-043d8ddd5d8d, runId = e44e4a47-00aa-4b75-84ab-e9646bcc1ab1]. Use file:///tmp/tempo
+rary-bf05f957-5a6b-4f46-8b45-c49c78e73bbb to store the query checkpoint.
+20/04/22 20:58:45 INFO FileStreamSourceLog: Set the compact interval to 10 [defaultCompactInterval: 10]
+20/04/22 20:58:46 INFO FileStreamSource: maxFilesPerBatch = None, maxFileAgeMs = 604800000
+20/04/22 20:58:46 INFO MicroBatchExecution: Using Source [FileStreamSource[file:/mnt/c/Users/user/udacity_spark/json]] from DataSourceV1 named 'FileSource[/mnt/c/Use
+rs/user/udacity_spark/json/]' [DataSource(org.apache.spark.sql.SparkSession@146542b3,json,List(),Some(StructType(StructField(status,StringType,true), StructField(tim
+estamp,TimestampType,true))),List(),None,Map(header -> true, path -> /mnt/c/Users/user/udacity_spark/json/),None)]
+20/04/22 20:58:46 INFO MicroBatchExecution: Starting new streaming query.
+20/04/22 20:58:46 INFO MicroBatchExecution: Stream started from {}
+20/04/22 20:58:46 INFO InMemoryFileIndex: It took 2 ms to list leaf files for 1 paths.
+20/04/22 20:58:46 INFO CheckpointFileManager: Writing atomically to file:/tmp/temporary-bf05f957-5a6b-4f46-8b45-c49c78e73bbb/sources/0/0 using temp file file:/tmp/te
+mporary-bf05f957-5a6b-4f46-8b45-c49c78e73bbb/sources/0/.0.c89e7ec8-5ba7-4949-aeba-f9912b72f5c3.tmp
+20/04/22 20:58:46 INFO CheckpointFileManager: Renamed temp file file:/tmp/temporary-bf05f957-5a6b-4f46-8b45-c49c78e73bbb/sources/0/.0.c89e7ec8-5ba7-4949-aeba-f9912b7
+2f5c3.tmp to file:/tmp/temporary-bf05f957-5a6b-4f46-8b45-c49c78e73bbb/sources/0/0
+20/04/22 20:58:46 INFO FileStreamSource: Log offset set to 0 with 1 new files
+20/04/22 20:58:46 INFO CheckpointFileManager: Writing atomically to file:/tmp/temporary-bf05f957-5a6b-4f46-8b45-c49c78e73bbb/offsets/0 using temp file file:/tmp/temp
+orary-bf05f957-5a6b-4f46-8b45-c49c78e73bbb/offsets/.0.fbfac79e-bcd2-4a56-9d01-338287700999.tmp
+20/04/22 20:58:46 INFO CheckpointFileManager: Renamed temp file file:/tmp/temporary-bf05f957-5a6b-4f46-8b45-c49c78e73bbb/offsets/.0.fbfac79e-bcd2-4a56-9d01-338287700
+999.tmp to file:/tmp/temporary-bf05f957-5a6b-4f46-8b45-c49c78e73bbb/offsets/0
+20/04/22 20:58:46 INFO MicroBatchExecution: Committed offsets for batch 0. Metadata OffsetSeqMetadata(0,1587578326268,Map(spark.sql.streaming.stateStore.providerClas
+s -> org.apache.spark.sql.execution.streaming.state.HDFSBackedStateStoreProvider, spark.sql.streaming.flatMapGroupsWithState.stateFormatVersion -> 2, spark.sql.strea
+ming.multipleWatermarkPolicy -> min, spark.sql.streaming.aggregation.stateFormatVersion -> 2, spark.sql.shuffle.partitions -> 200))
+20/04/22 20:58:46 INFO FileStreamSource: Processing 1 files from 0:0
+20/04/22 20:58:46 INFO InMemoryFileIndex: It took 2 ms to list leaf files for 1 paths.
+20/04/22 20:58:46 INFO FileSourceStrategy: Pruning directories with:
+20/04/22 20:58:46 INFO FileSourceStrategy: Post-Scan Filters:
+20/04/22 20:58:46 INFO FileSourceStrategy: Output Data Schema: struct<status: string, timestamp: timestamp>
+20/04/22 20:58:46 INFO FileSourceScanExec: Pushed Filters:
+20/04/22 20:58:47 INFO CodeGenerator: Code generated in 286.2942 ms
+20/04/22 20:58:47 INFO CodeGenerator: Code generated in 18.9269 ms
+20/04/22 20:58:47 INFO MemoryStore: Block broadcast_0 stored as values in memory (estimated size 285.5 KB, free 366.0 MB)
+20/04/22 20:58:48 INFO MemoryStore: Block broadcast_0_piece0 stored as bytes in memory (estimated size 23.3 KB, free 366.0 MB)
+20/04/22 20:58:48 INFO BlockManagerInfo: Added broadcast_0_piece0 in memory on 172.17.177.241:54620 (size: 23.3 KB, free: 366.3 MB)
+20/04/22 20:58:48 INFO SparkContext: Created broadcast 0 from start at NativeMethodAccessorImpl.java:0
+20/04/22 20:58:48 INFO FileSourceScanExec: Planning scan with bin packing, max size: 4243303 bytes, open cost is considered as scanning 4194304 bytes.
+20/04/22 20:58:48 INFO WriteToDataSourceV2Exec: Start processing data source writer: org.apache.spark.sql.execution.streaming.sources.MicroBatchWriter@69918ec4. The
+input RDD has 1 partitions.
+20/04/22 20:58:48 INFO SparkContext: Starting job: start at NativeMethodAccessorImpl.java:0
+20/04/22 20:58:48 INFO DAGScheduler: Got job 0 (start at NativeMethodAccessorImpl.java:0) with 1 output partitions
+20/04/22 20:58:48 INFO DAGScheduler: Final stage: ResultStage 0 (start at NativeMethodAccessorImpl.java:0)
+20/04/22 20:58:48 INFO DAGScheduler: Parents of final stage: List()
+20/04/22 20:58:48 INFO DAGScheduler: Missing parents: List()
+20/04/22 20:58:48 INFO DAGScheduler: Submitting ResultStage 0 (MapPartitionsRDD[1] at start at NativeMethodAccessorImpl.java:0), which has no missing parents
+20/04/22 20:58:48 INFO MemoryStore: Block broadcast_1 stored as values in memory (estimated size 9.1 KB, free 366.0 MB)
+20/04/22 20:58:48 INFO MemoryStore: Block broadcast_1_piece0 stored as bytes in memory (estimated size 5.2 KB, free 366.0 MB)
+20/04/22 20:58:48 INFO BlockManagerInfo: Added broadcast_1_piece0 in memory on 172.17.177.241:54620 (size: 5.2 KB, free: 366.3 MB)
+20/04/22 20:58:48 INFO SparkContext: Created broadcast 1 from broadcast at DAGScheduler.scala:1163
+20/04/22 20:58:48 INFO DAGScheduler: Submitting 1 missing tasks from ResultStage 0 (MapPartitionsRDD[1] at start at NativeMethodAccessorImpl.java:0) (first 15 tasks
+are for partitions Vector(0))
+20/04/22 20:58:48 INFO TaskSchedulerImpl: Adding task set 0.0 with 1 tasks
+20/04/22 20:58:48 INFO TaskSetManager: Starting task 0.0 in stage 0.0 (TID 0, localhost, executor driver, partition 0, PROCESS_LOCAL, 8268 bytes)
+20/04/22 20:58:48 INFO Executor: Running task 0.0 in stage 0.0 (TID 0)
+20/04/22 20:58:48 INFO FileScanRDD: Reading File path: file:///mnt/c/Users/user/udacity_spark/json/data.txt, range: 0-48999, partition values: [empty row]
+20/04/22 20:58:48 INFO CodeGenerator: Code generated in 22.2186 ms
+20/04/22 20:58:48 INFO DataWritingSparkTask: Commit authorized for partition 0 (task 0, attempt 0, stage 0.0)
+20/04/22 20:58:48 INFO DataWritingSparkTask: Committed partition 0 (task 0, attempt 0, stage 0.0)
+20/04/22 20:58:48 INFO Executor: Finished task 0.0 in stage 0.0 (TID 0). 58756 bytes result sent to driver
+20/04/22 20:58:49 INFO TaskSetManager: Finished task 0.0 in stage 0.0 (TID 0) in 465 ms on localhost (executor driver) (1/1)
+20/04/22 20:58:49 INFO TaskSchedulerImpl: Removed TaskSet 0.0, whose tasks have all completed, from pool
+20/04/22 20:58:49 INFO DAGScheduler: ResultStage 0 (start at NativeMethodAccessorImpl.java:0) finished in 0.669 s
+20/04/22 20:58:49 INFO DAGScheduler: Job 0 finished: start at NativeMethodAccessorImpl.java:0, took 0.801153 s
+20/04/22 20:58:49 INFO WriteToDataSourceV2Exec: Data source writer org.apache.spark.sql.execution.streaming.sources.MicroBatchWriter@69918ec4 is committing.
+-------------------------------------------
+Batch: 0
+-------------------------------------------
+20/04/22 20:58:49 INFO CodeGenerator: Code generated in 16.5886 ms
+20/04/22 20:58:49 INFO CodeGenerator: Code generated in 14.147 ms
++---------+-------------------+
+|   status|          timestamp|
++---------+-------------------+
+|Processed|2019-07-18 08:28:06|
+|Processed|2018-11-12 05:03:31|
+|Processed|2019-08-28 14:00:47|
+|Processed|2019-02-17 02:16:55|
+|Processed|2018-07-29 04:16:00|
+|Processed|2019-09-01 04:31:47|
+|Processed|2019-08-13 05:13:39|
+|Processed|2019-07-07 22:25:35|
+|Processed|2018-08-20 11:27:38|
+|Processed|2019-04-18 13:21:41|
+|Processed|2019-08-04 16:53:37|
+|Processed|2018-07-29 00:54:41|
+|Processed|2018-07-19 13:12:30|
+|Processed|2018-02-16 03:40:02|
+|Processed|2019-06-23 11:04:27|
+|Processed|2018-12-06 02:25:52|
+|Processed|2018-07-26 18:44:33|
+|Processed|2018-03-07 14:34:56|
+|Processed|2018-02-02 14:26:46|
+|Processed|2018-03-30 12:44:09|
++---------+-------------------+
+only showing top 20 rows
+
+20/04/22 20:58:49 INFO WriteToDataSourceV2Exec: Data source writer org.apache.spark.sql.execution.streaming.sources.MicroBatchWriter@69918ec4 committed.
+20/04/22 20:58:49 INFO SparkContext: Starting job: start at NativeMethodAccessorImpl.java:0
+20/04/22 20:58:49 INFO DAGScheduler: Job 1 finished: start at NativeMethodAccessorImpl.java:0, took 0.000065 s
+20/04/22 20:58:49 INFO CheckpointFileManager: Writing atomically to file:/tmp/temporary-bf05f957-5a6b-4f46-8b45-c49c78e73bbb/commits/0 using temp file file:/tmp/temp
+orary-bf05f957-5a6b-4f46-8b45-c49c78e73bbb/commits/.0.e351c484-761c-4bf2-8ad7-6c04dbea0b1d.tmp
+20/04/22 20:58:49 INFO CheckpointFileManager: Renamed temp file file:/tmp/temporary-bf05f957-5a6b-4f46-8b45-c49c78e73bbb/commits/.0.e351c484-761c-4bf2-8ad7-6c04dbea0
+b1d.tmp to file:/tmp/temporary-bf05f957-5a6b-4f46-8b45-c49c78e73bbb/commits/0
+20/04/22 20:58:49 INFO MicroBatchExecution: Streaming query made progress: {
+  "id" : "322b7a41-4aa8-44da-bdda-043d8ddd5d8d",
+  "runId" : "e44e4a47-00aa-4b75-84ab-e9646bcc1ab1",
+  "name" : null,
+  "timestamp" : "2020-04-22T17:58:46.056Z",
+  "batchId" : 0,
+  "numInputRows" : 1000,
+  "processedRowsPerSecond" : 282.6455624646693,
+  "durationMs" : {
+    "addBatch" : 2430,
+    "getBatch" : 189,
+    "getOffset" : 186,
+    "queryPlanning" : 412,
+    "triggerExecution" : 3537,
+    "walCommit" : 129
+  },
+  "stateOperators" : [ ],
+  "sources" : [ {
+    "description" : "FileStreamSource[file:/mnt/c/Users/user/udacity_spark/json]",
+    "startOffset" : null,
+    "endOffset" : {
+      "logOffset" : 0
+    },
+    "numInputRows" : 1000,
+    "processedRowsPerSecond" : 282.6455624646693
+  } ],
+  "sink" : {
+    "description" : "org.apache.spark.sql.execution.streaming.ConsoleSinkProvider@206cbd31"
+  }
+}
+20/04/22 20:58:49 INFO InMemoryFileIndex: It took 4 ms to list leaf files for 1 paths.
+20/04/22 20:58:49 INFO MicroBatchExecution: Streaming query made progress: {
+  "id" : "322b7a41-4aa8-44da-bdda-043d8ddd5d8d",
+  "runId" : "e44e4a47-00aa-4b75-84ab-e9646bcc1ab1",
+  "name" : null,
+  "timestamp" : "2020-04-22T17:58:49.675Z",
+  "batchId" : 1,
+  "numInputRows" : 0,
+  "inputRowsPerSecond" : 0.0,
+  "processedRowsPerSecond" : 0.0,
+  "durationMs" : {
+    "getOffset" : 52,
+    "triggerExecution" : 57
+  },
+  "stateOperators" : [ ],
+  "sources" : [ {
+    "description" : "FileStreamSource[file:/mnt/c/Users/user/udacity_spark/json]",
+    "startOffset" : {
+      "logOffset" : 0
+    },
+    "endOffset" : {
+      "logOffset" : 0
+    },
+    "numInputRows" : 0,
+    "inputRowsPerSecond" : 0.0,
+    "processedRowsPerSecond" : 0.0
+  } ],
+  "sink" : {
+    "description" : "org.apache.spark.sql.execution.streaming.ConsoleSinkProvider@206cbd31"
+  }
+}
+20/04/22 20:58:49 INFO InMemoryFileIndex: It took 1 ms to list leaf files for 1 paths.
+20/04/22 20:58:49 INFO InMemoryFileIndex: It took 1 ms to list leaf files for 1 paths.
+20/04/22 20:58:49 INFO InMemoryFileIndex: It took 1 ms to list leaf files for 1 paths.
+20/04/22 20:58:49 INFO InMemoryFileIndex: It took 1 ms to list leaf files for 1 paths.
+^CTraceback (most recent call last):
+  File "/mnt/c/Users/user/udacity_spark/spark_sample04.py", line 36, in <module>
+    query.awaitTermination()
+  File "/mnt/c/Users/user/spark-2.4.5-bin-hadoop2.7/python/lib/pyspark.zip/pyspark/sql/streaming.py", line 103, in awaitTermination
+  File "/mnt/c/Users/user/spark-2.4.5-bin-hadoop2.7/python/lib/py4j-0.10.7-src.zip/py4j/java_gateway.py", line 1255, in __call__
+  File "/mnt/c/Users/user/spark-2.4.5-bin-hadoop2.7/python/lib/py4j-0.10.7-src.zip/py4j/java_gateway.py", line 985, in send_command
+  File "/mnt/c/Users/user/spark-2.4.5-bin-hadoop2.7/python/lib/py4j-0.10.7-src.zip/py4j/java_gateway.py", line 1152, in send_command
+20/04/22 20:58:50 INFO SparkContext: Invoking stop() from shutdown hook
+  File "/usr/lib/python3.6/socket.py", line 586, in readinto
+    return self._sock.recv_into(b)
+  File "/mnt/c/Users/user/spark-2.4.5-bin-hadoop2.7/python/lib/pyspark.zip/pyspark/context.py", line 270, in signal_handler
+KeyboardInterrupt
+20/04/22 20:58:50 INFO InMemoryFileIndex: It took 2 ms to list leaf files for 1 paths.
+20/04/22 20:58:50 INFO SparkUI: Stopped Spark web UI at http://172.17.177.241:4040
+20/04/22 20:58:50 INFO MapOutputTrackerMasterEndpoint: MapOutputTrackerMasterEndpoint stopped!
+20/04/22 20:58:50 INFO InMemoryFileIndex: It took 2 ms to list leaf files for 1 paths.
+20/04/22 20:58:50 INFO MemoryStore: MemoryStore cleared
+20/04/22 20:58:50 INFO BlockManager: BlockManager stopped
+20/04/22 20:58:50 INFO InMemoryFileIndex: It took 10 ms to list leaf files for 1 paths.
+20/04/22 20:58:50 INFO BlockManagerMaster: BlockManagerMaster stopped
+20/04/22 20:58:50 INFO OutputCommitCoordinator$OutputCommitCoordinatorEndpoint: OutputCommitCoordinator stopped!
+20/04/22 20:58:50 INFO SparkContext: Successfully stopped SparkContext
+20/04/22 20:58:50 INFO InMemoryFileIndex: It took 2 ms to list leaf files for 1 paths.
+20/04/22 20:58:50 INFO ShutdownHookManager: Shutdown hook called
+20/04/22 20:58:50 INFO ShutdownHookManager: Deleting directory /tmp/temporary-bf05f957-5a6b-4f46-8b45-c49c78e73bbb
+20/04/22 20:58:50 INFO ShutdownHookManager: Deleting directory /tmp/spark-886b171e-a8d8-4132-9a79-b9dfa3301e88/pyspark-81592895-4a92-4974-b7ad-7036b83d39a0
+20/04/22 20:58:50 INFO InMemoryFileIndex: It took 3 ms to list leaf files for 1 paths.
+20/04/22 20:58:50 INFO ShutdownHookManager: Deleting directory /tmp/spark-886b171e-a8d8-4132-9a79-b9dfa3301e88
+20/04/22 20:58:50 INFO ShutdownHookManager: Deleting directory /tmp/spark-2ae5a972-344f-4ac8-b709-23d91ac04474
