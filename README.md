@@ -1,6 +1,9 @@
 # where I keep all my online courses' materials 
-- Udacity - Data Analyst Nanodegree
-- Udacity - Data Engineering Nanodegree
-- Udacity - Data Streaming Nanodegree
-- Udacity - Data Wrangling with MongoDB 
-- MongoDB Univeristy - MongoDB for Developers (M101P)
+
+Course                                 | Year 
+| ------------------------------------ | ------------- |
+Udacity - Data Analyst Nanodegree      | 2018
+Udacity - Data Engineering Nanodegree  | 2019
+Udacity - Data Streaming Nanodegree    | 2020
+Udacity - Data Wrangling with MongoDB  | 2017
+MongoDB Univeristy - MongoDB for Developers (M101P) | 2017
