@@ -1,4 +1,3 @@
-
 # Introduction to Stream Processing
 
 ## Glossary of Key Terms You’ll Learn in this Lesson
