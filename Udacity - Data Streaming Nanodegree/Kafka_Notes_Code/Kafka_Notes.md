@@ -68,9 +68,6 @@ ream Processing applications perform calculations on Data Streams.
 ## Components of a Stream Processing Solution
 
 - Streaming data store
-- Streaming calculation
-
-- Streaming data store 
   - May look like a message queue, as is the case with Apache Kafka
   - May look like a SQL store, as is the case with Apache Cassandra
   - Responsible for holding all of the **immutable event database** in the system
@@ -80,16 +77,16 @@ ream Processing applications perform calculations on Data Streams.
 
 
 -  Processing Application and Framework (Streaming calculation)
-        - Stream Processing applications sit downstream of the data store
-        - Stream Processing applications ingest real-time event data from one or more data streams
-        - Stream Processing applications aggregate, join, and find differences in data from these streams
-        - Common Stream Processing Application Frameworks in use today include:
-            - Confluent KSQL
-            - Kafka Streams
-            - Apache Flink
-            - Apache Samza
-            - Apache Spark Structure Streaming
-            - Faust Python Library
+    - Stream Processing applications sit downstream of the data store
+    - Stream Processing applications ingest real-time event data from one or more data streams
+    - Stream Processing applications aggregate, join, and find differences in data from these streams
+    - Common Stream Processing Application Frameworks in use today include:
+        - Confluent KSQL
+        - Kafka Streams
+        - Apache Flink
+        - Apache Samza
+        - Apache Spark Structure Streaming
+        - Faust Python Library
 
 
 ## Benefits of Stream Processing
@@ -102,24 +99,21 @@ ream Processing applications perform calculations on Data Streams.
 
 
 ## Examples of stream processing solutions :
-    - A process that sends a receipt to a customer as soon as it receives a purchase event
-    - A process that calculates the total page visits in the last 15 minutes
-    - A process that raises an alert if a certain number of error logs are produced by an application in the last 5 minutes
+- A process that sends a receipt to a customer as soon as it receives a purchase event
+- A process that calculates the total page visits in the last 15 minutes
+- A process that raises an alert if a certain number of error logs are produced by an application in the last 5 minutes
 
 
 ## Examples of batch processing solution
-    - A daily process which runs sentiment analysis on customer reviews
-    - A process which pulls metrics from all microservices every 10 seconds and aggregate these metrics into a centralized view
-
-
+- A daily process which runs sentiment analysis on customer reviews
+- A process which pulls metrics from all microservices every 10 seconds and aggregate these metrics into a centralized view
 
 ## scenarios are better suited to a traditional SQL Database?
-    - Performing a calculation across a full historical representation of a dataset
-    - Storing mutable data in its most up-to-date form
-    - Running on-demand exploratory queries from business users
-
-    - Not 
-        - Updating a calculation as soon as an event occurrs in a system 
+- Performing a calculation across a full historical representation of a dataset
+- Storing mutable data in its most up-to-date form
+- Running on-demand exploratory queries from business users
+- Not 
+    - Updating a calculation as soon as an event occurrs in a system 
 
 ## Key concepts to remember about stream processing
 
@@ -178,5 +172,7 @@ ream Processing applications perform calculations on Data Streams.
     typically in reference to another data store
 - The term **sink** is sometimes used to refer to Kafka clients which are extracting data from Kafka, 
         typically in reference to another data store
+
+---
 
 # Apache Kafka
