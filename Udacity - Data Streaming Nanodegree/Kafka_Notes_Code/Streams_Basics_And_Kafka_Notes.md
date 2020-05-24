@@ -39,7 +39,7 @@ There's an important distinction to note between services that deliver an event 
                 - The event data has information about what happened but doesn't have the data that triggered the event.
                 - For example :
                     -     an event notifies consumers that a file was created. It may have general information about the file, but it doesn't have the file itself.
-                - Discrete events are ideal for serverless solutions that need to scale.<br/><br/>
+                - Discrete events are ideal for serverless solutions that need to scale.<br/>
             
             - **Series events** report a condition and are analyzable.
                 - The events are in a sequence, or a stream of events, over a period of timet and interrelated.
