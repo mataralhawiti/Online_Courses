@@ -232,6 +232,29 @@ ream Processing applications perform calculations on Data Streams.
 ## Apache Kafka ecosystem
 - such as ksql (ksqlDB, Kafka connect)
 
+
+## Streams vs. Tables (In Streaming context, with Kafka as an example)
+- Streams :
+    - A stream is a durable, partitioned sequence of **`immutable events`**.
+    - When a new event is added a stream, it's appended to the partition that its key belongs to.
+    - Streams are useful for **`modeling a historical sequence of activity`**. 
+    - For example:
+        - you might use a stream to model a series of customer purchases or a sequence of readings from a sensor. Under the hood
+        
+    - streams are simply stored as **Apache Kafka topics** with an ***enforced schema***.
+    - You can create a stream from scratch or declare a stream on top of an existing Kafka topic. In both cases, you can specify a variety of configuration options.<br/><br/>
+
+
+
+- Tables :
+    - A table is a durable, partitioned collection that **`models change over time`**.
+    - **`It's mutable`**.
+    - By contrast to streams, which represent a historical sequence of events, tables **`represent what is true as of “now”`**.
+    - For example :
+        - you might model the locations that someone has lived at as a stream: first Miami, then New York, then London, and so forth.You can use a table to roll up this information and tell you where they live right now.
+    - Tables can also be used to materialize a view by incrementally aggregating a stream of events.<br/><br/>
+
+
 ---
 
 # Apache Kafka
