@@ -269,13 +269,20 @@ ream Processing applications perform calculations on Data Streams.
             - ksqlDB leverages the idea of stream/table duality by storing both components of each table:
                 - The current state of a table is stored locally and ephemerally on a specific server by using RocksDB. 
                 - The series of changes that are applied to a table is stored durably in a Kafka topic and is replicated across Kafka brokers. 
-                - If a ksqlDB server with a materialization of a table fails, a new server rematerializes the table from the Kafka changelog.
-
-
-
-    <br/><br/>
+                - If a ksqlDB server with a materialization of a table fails, a new server rematerializes the table from the Kafka changelog.<br/><br/>
 
 
 ---
 
 # Apache Kafka
+
+
+
+
+
+# ksqlDB vs. Kafka Streams
+- **`ksqlDB`** is the streaming database for Apache Kafka. With ksqlDB, you can write event streaming applications by using a lightweight SQL syntax.
+
+- **`Kafka Streams`** is the Kafka library for writing streaming applications and microservices in Java and Scala.
+
+***`ksqlDB is built on Kafka Streams, a robust stream processing framework that is part of Kafka.`***
