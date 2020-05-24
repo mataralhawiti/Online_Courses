@@ -73,6 +73,7 @@ There's an important distinction to note between services that deliver an event 
 - Asynchronous messaging
 - The producer and the consumer can communicate directly or optionally through an intermediary entity (message broker).
 - serialization format.
+- changelog 
 
 ## Understanding Stream Processing
 
@@ -261,6 +262,16 @@ ream Processing applications perform calculations on Data Streams.
     - You can create a table from scratch or declare a table on top of an existing Apache Kafka topic.
     - In either case, the table is not materialized, which limits its ability to be queried.
     - Only tables that are derived from other collections are materialized.
+        - **Materialized Views:**
+            - The benefit of a materialized view is that it evaluates a query on the changes only (the delta), instead of evaluating the query on the entire table.
+            - When a new event is integrated, the current state of the view evolves into a new state. This transition happens by applying the aggregation function that defines the view with the current state and the new event.
+            - When a new event is integrated, the aggregation function that defines the view is applied only on this new event, leading to a new state for the view. In this way, a view is never "fully recomputed" when new events arrive. Instead, the view adjusts incrementally to account for the new information, which means that queries against materialized views are highly efficient.
+            - ksqlDB leverages the idea of stream/table duality by storing both components of each table:
+                - The current state of a table is stored locally and ephemerally on a specific server by using RocksDB. 
+                - The series of changes that are applied to a table is stored durably in a Kafka topic and is replicated across Kafka brokers. 
+                - If a ksqlDB server with a materialization of a table fails, a new server rematerializes the table from the Kafka changelog.
+
+
 
     <br/><br/>
 
