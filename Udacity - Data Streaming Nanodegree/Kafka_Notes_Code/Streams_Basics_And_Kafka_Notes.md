@@ -252,7 +252,12 @@ ream Processing applications perform calculations on Data Streams.
     - By contrast to streams, which represent a historical sequence of events, tables **`represent what is true as of “now”`**.
     - For example :
         - you might model the locations that someone has lived at as a stream: first Miami, then New York, then London, and so forth.You can use a table to roll up this information and tell you where they live right now.
-    - Tables can also be used to materialize a view by incrementally aggregating a stream of events.<br/><br/>
+    - Tables can also be used to materialize a view by incrementally aggregating a stream of events.
+    - Tables work by leveraging the keys of each event. Keys are used to denote identity. 
+    - If a sequence of events shares a key, the last event for a given key represents the most up-to-date information.
+        -  compacted topic :
+            - Compaction is a process that periodically deletes all but the newest events for each key (log compaction)
+    <br/><br/>
 
 
 ---
