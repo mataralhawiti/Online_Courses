@@ -33,7 +33,7 @@ There's an important distinction to note between services that deliver an event 
         - The publisher of the event has **`no expectation about how the event is handled`**.
         - The consumer of the event **`decides what to do with the notification`**.
         - The producer and consumer are loosely coupled and managed independently.
-        - Events can be **`discrete`** units or part of a **`series`**.<br/><br/>
+        - Events can be **`discrete`** units or part of a **`series`**.<br/>
             - **Discrete events** report state change and are actionable (discrete fact).
                 - To take the next step, the consumer only needs to know that something happened.
                 - The event data has information about what happened but doesn't have the data that triggered the event.
