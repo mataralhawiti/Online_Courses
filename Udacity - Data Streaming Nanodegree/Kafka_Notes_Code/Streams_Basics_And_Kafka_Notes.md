@@ -32,21 +32,21 @@ There's an important distinction to note between services that deliver an event 
     - An event is a lightweight notification of a condition or a state change.
         - The publisher of the event has **`no expectation about how the event is handled`**.
         - The consumer of the event **`decides what to do with the notification`**.
-        - Events can be **`discrete`** units or part of a **`series`**.
-        -The producer and consumer are loosely coupled and managed independently.<br/><br/>
-    - **Discrete events** report state change and are actionable (discrete fact).
-        - To take the next step, the consumer only needs to know that something happened.
-        - The event data has information about what happened but doesn't have the data that triggered the event.
-        - For example :
-            -     an event notifies consumers that a file was created. It may have general information about the file, but it doesn't have the file itself.
-        - Discrete events are ideal for serverless solutions that need to scale.<br/><br/>
-    
-    - **Series events** report a condition and are analyzable.
-        - The events are in a sequence, or a stream of events, over a period of timet and interrelated.
-        - The consumer needs the sequenced series of events to analyze what happened.
-        - Telemetry is a common use case, for example, health and load monitoring of a system.
-        - Another case is event streaming from IoT devices.
-        - ex: log data events <br/><br/>
+        - The producer and consumer are loosely coupled and managed independently.
+        - Events can be **`discrete`** units or part of a **`series`**.<br/><br/>
+            - **Discrete events** report state change and are actionable (discrete fact).
+                - To take the next step, the consumer only needs to know that something happened.
+                - The event data has information about what happened but doesn't have the data that triggered the event.
+                - For example :
+                    -     an event notifies consumers that a file was created. It may have general information about the file, but it doesn't have the file itself.
+                - Discrete events are ideal for serverless solutions that need to scale.<br/><br/>
+            
+            - **Series events** report a condition and are analyzable.
+                - The events are in a sequence, or a stream of events, over a period of timet and interrelated.
+                - The consumer needs the sequenced series of events to analyze what happened.
+                - Telemetry is a common use case, for example, health and load monitoring of a system.
+                - Another case is event streaming from IoT devices.
+                - ex: log data events <br/><br/>
 
 - Message (command):
     - A message is raw data produced by a service to be consumed or stored elsewhere.
