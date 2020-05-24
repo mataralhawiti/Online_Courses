@@ -25,6 +25,54 @@ typically in reference to another data store.
 - `Producer (Kafka`) : An application which is sending data to one or more Kafka Topics.
 - `Consumer (Kafka)` : An application which is receiving data from one or more Kafka Topics.
 
+
+## Event services vs. message services
+There's an important distinction to note between services that deliver an event and services that deliver a message.
+- Event : 
+    - An event is a lightweight notification of a condition or a state change.
+        - The publisher of the event has **`no expectation about how the event is handled`**.
+        - The consumer of the event **`decides what to do with the notification`**.
+        - Events can be **`discrete`** units or part of a **`series`**.
+        -The producer and consumer are loosely coupled and managed independently.<br/><br/>
+    - **Discrete events** report state change and are actionable (discrete fact).
+        - To take the next step, the consumer only needs to know that something happened.
+        - The event data has information about what happened but doesn't have the data that triggered the event.
+        - For example :
+            -     an event notifies consumers that a file was created. It may have general information about the file, but it doesn't have the file itself.
+        - Discrete events are ideal for serverless solutions that need to scale.<br/><br/>
+    
+    - **Series events** report a condition and are analyzable.
+        - The events are in a sequence, or a stream of events, over a period of timet and interrelated.
+        - The consumer needs the sequenced series of events to analyze what happened.
+        - Telemetry is a common use case, for example, health and load monitoring of a system.
+        - Another case is event streaming from IoT devices.
+        - ex: log data events <br/><br/>
+
+- Message (command):
+    - A message is raw data produced by a service to be consumed or stored elsewhere.
+        - The message contains the data that triggered the message pipeline.
+        - The publisher of the message has an expectation about how the consumer handles the message.
+        - he publisher may also **`expect`** that the receiver(s) of a message report back the outcome of the processing, and will make a path available for those reports to be sent back.
+        - The transfer of such messages may be subject to certain deadlines, might have to occur at certain times, and may have to be processed in a certain order
+        - A contract exists between the two sides.
+        - For example:
+             -     the publisher sends a message with the raw data, and expects the consumer to create a file from that data and send a response when the work is done.
+
+        - A command is a high-value message and must be delivered at least once.
+        - If a command is lost, the entire business transaction might fail.
+        - Also, a command shouldn't be processed more than once. Doing so might cause an erroneous transaction.
+        - Commands are often used to manage the workflow of a multistep business transaction.
+
+## Notes
+
+- publish-subscribe model
+-  capture, retention, and replay of telemetry and event stream data
+- Brokered messaging system. It stores messages in a **`"broker"`** (for example, a queue) until the consuming party is ready to receive the messages.
+- Advanced messaging features : FIFO, batching/sessions, transactions, dead-lettering, temporal control, routing and filtering, and duplicate detection
+- coupling is very loose
+- Asynchronous messaging
+- The producer and the consumer can communicate directly or optionally through an intermediary entity (message broker).
+
 ## Understanding Stream Processing
 
 - Stream Processing:
@@ -88,8 +136,17 @@ ream Processing applications perform calculations on Data Streams.
         - Apache Spark Structure Streaming
         - Faust Python Library
 
+## Defintion from Microsfot 
+
+- A streaming platform has three key capabilities:
+    1. **`Publish and subscribe`** to streams of records, similar to a message queue or enterprise messaging system.
+    2. **`Store streams`** of records in a fault-tolerant durable way.
+    3. **`Process streams`** of records as they occur.
+
+
 
 ## Benefits of Stream Processing
+
    - More scalable due to distributed nature of storage
    - Provides a useful abstraction that decouples applications from each other
    - Allows one set of data to satisfy many use-cases which may not have been predictable when the dataset was originally created
@@ -158,20 +215,22 @@ ream Processing applications perform calculations on Data Streams.
 
 ## Apache Kafka as a Stream Processing Tool
 
-- Provides an easy-to-use message queue interface on top of its append-only log-structured storage medium
-- Kafka is a log of events
-- In Kafka, an event describes something that has occurred, as opposed to a request for an action to be performed
-- Kafka is distributed by default
-- Fault tolerant by design, meaning it is hard to lose data if a node is suddenly lost
-- Kafka scales from 1 to thousands of nodes
-- Kafka provides ordering guarantees for data stored within it, meaning that the order in which data is received is the order in which data will be produced to consumers.
-- Commonly used data store for popular streaming tools like Apache Spark, Flink, and Samza
+- Provides an easy-to-use **message queue interface** on top of its **append-only log-structured storage** medium
+- Kafka is a **log of events** where traditional message queues are typically used as **job queuees**.
+- kafka **stores events**, no actions no jobs<br/><br/>
+- In Kafka, **an event describes something that has occurred**, where in traditonal messages or **job queuees** are requests for an action to be performed<br/><br/>
+- Kafka is **distributed** by default
+- Fault **tolerant** by design, meaning it is hard to lose data if a node is suddenly lost
+- Kafka **scales** from 1 to thousands of nodes
+- Kafka provides **ordering guarantees for data stored within it**, meaning that the order in which data is received is the order in which data will be produced to consumers.
+- Commonly used data store for popular streaming tools like Apache Spark, Flink, and Samza<br/><br/>
 
-- event queue (like kafka) vs job or command queue
-- The term **source** is sometimes used to refer to Kafka clients which are producing data into Kafka, 
-    typically in reference to another data store
-- The term **sink** is sometimes used to refer to Kafka clients which are extracting data from Kafka, 
-        typically in reference to another data store
+- **`event queue (like kafka) vs job or command queue`**<br/><br/>
+- The term **`Source`** is sometimes used to refer to Kafka clients which are producing data into Kafka, typically in reference to another data store
+- The term **`sink`** is sometimes used to refer to Kafka clients which are extracting data from Kafka,typically in reference to another data store
+
+## Apache Kafka ecosystem
+- such as ksql (ksqlDB, Kafka connect)
 
 ---
 
