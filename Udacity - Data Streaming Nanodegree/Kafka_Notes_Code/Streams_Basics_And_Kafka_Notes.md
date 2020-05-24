@@ -72,6 +72,7 @@ There's an important distinction to note between services that deliver an event 
 - coupling is very loose
 - Asynchronous messaging
 - The producer and the consumer can communicate directly or optionally through an intermediary entity (message broker).
+- serialization format.
 
 ## Understanding Stream Processing
 
@@ -257,6 +258,10 @@ ream Processing applications perform calculations on Data Streams.
     - If a sequence of events shares a key, the last event for a given key represents the most up-to-date information.
         -  compacted topic :
             - Compaction is a process that periodically deletes all but the newest events for each key (log compaction)
+    - You can create a table from scratch or declare a table on top of an existing Apache Kafka topic.
+    - In either case, the table is not materialized, which limits its ability to be queried.
+    - Only tables that are derived from other collections are materialized.
+
     <br/><br/>
 
 
