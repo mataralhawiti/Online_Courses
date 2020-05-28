@@ -192,7 +192,9 @@ ream Processing applications perform calculations on Data Streams.
 - Append-Only Logs in SQL Databases
     - SQL DBs use append-only log to communicate and synch changes in a process known as Change Data Capture (CDC)
      to keep synch between primary & secondary
-    - in Postgres, know as "write-ahead" log or Wall 
+    - in Postgres, know as "write-ahead log" (WAL)
+    - write-ahead = the log transaction in SQL Server
+    - Each insert, update, and delete that changes state is an event. Many databases use a WAL (write-ahead log) internally to append such events durably and quickly to a filesystem before acknowledging the change to clients, after which time in-memory data structures and other, more permanent files are updated with the current state of the records. That way, if the database crashes after the WAL write completes, the WAL can be used to reconstruct and complete any in-flight transactions, once the database is running again.
 
 
 ## Log-Structure Storage
@@ -286,3 +288,15 @@ ream Processing applications perform calculations on Data Streams.
 - **`Kafka Streams`** is the Kafka library for writing streaming applications and microservices in Java and Scala.
 
 ***`ksqlDB is built on Kafka Streams, a robust stream processing framework that is part of Kafka.`***
+
+
+# ksqlDB 
+- Push and Pull queries
+    - Query tables and streams by either continuously subscribing to changing query results as new events occur (push queries).
+    - or looking up results at a point in time (pull queries), removing the need to integrate separate systems to serve each.
+
+
+
+--
+
+
