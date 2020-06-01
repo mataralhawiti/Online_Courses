@@ -73,7 +73,7 @@ There's an important distinction to note between services that deliver an event 
 - Asynchronous messaging
 - The producer and the consumer can communicate directly or optionally through an intermediary entity (message broker).
 - serialization format.
-- changelog 
+- changelog **
 
 ## Understanding Stream Processing
 
